@@ -1,7 +1,0 @@
-{
-  "books": [
-    { "id": "cn10", "subject": "Công nghệ", "grade": "Lớp 10", "title": "Công nghệ 10 - Thiết kế và Công nghệ (KNTT)", "file": "10-sgk-cong-nghe-10-thiet-ke-va-cong-nghe.md", "supplement": "bo-sung-cong-nghe.json", "bank": "ngan-hang-cong-nghe.json" },
-    { "id": "cn11", "subject": "Công nghệ", "grade": "Lớp 11", "title": "Công nghệ 11 - Công nghệ Cơ khí (KNTT)", "file": "11-sgk-cong-nghe-11-cong-nghe-co-khi.md", "supplement": "bo-sung-cong-nghe.json", "bank": "ngan-hang-cong-nghe.json" },
-    { "id": "cn12", "subject": "Công nghệ", "grade": "Lớp 12", "title": "Công nghệ 12 - Công nghệ Điện - Điện tử (KNTT)", "file": "12-sgk-cong-nghe-12-cong-nghe-dien-dien-tu.md", "supplement": "bo-sung-cong-nghe.json", "bank": "ngan-hang-cong-nghe.json" }
-  ]
-}
