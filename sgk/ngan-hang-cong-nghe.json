@@ -1,0 +1,464 @@
+{
+ "10-sgk-cong-nghe-10-thiet-ke-va-cong-nghe.md": [
+  {
+   "bai": 2,
+   "question": "Theo SGK Công nghệ 10 (Bài 2), cấu trúc của một hệ thống kĩ thuật gồm có mấy thành phần chính?",
+   "options": [
+    "3 thành phần: Đầu vào, Bộ phận xử lí và Đầu ra",
+    "2 thành phần: Đầu vào và Đầu ra",
+    "4 thành phần: Nguồn điện, Dây dẫn, Công tắc và Tải",
+    "5 thành phần: Cảm biến, Vi xử lí, Mạch kích, Động cơ và Nguồn"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 2] Cấu trúc của một hệ thống kĩ thuật có ba thành phần chính: 1) Đầu vào; 2) Bộ phận xử lí; 3) Đầu ra."
+  },
+  {
+   "bai": 8,
+   "question": "Trong quy định tiêu chuẩn khổ giấy vẽ kĩ thuật (TCVN 7285:2003, Bài 8), khổ giấy A4 có kích thước là bao nhiêu?",
+   "options": [
+    "297 x 210 mm",
+    "420 x 297 mm",
+    "594 x 420 mm",
+    "841 x 594 mm"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 8] Khổ giấy A4 có kích thước tiêu chuẩn là 297 x 210 mm."
+  },
+  {
+   "bai": 8,
+   "question": "Theo tiêu chuẩn TCVN 8-24:2002 (Bài 8), nét liền đậm trong bản vẽ kĩ thuật được ứng dụng để vẽ đối tượng nào?",
+   "options": [
+    "Đường bao thấy, cạnh thấy",
+    "Đường kích thước, đường gióng",
+    "Đường tâm, đường trục đối xứng",
+    "Đường bao khuất, cạnh khuất"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 8] Nét liền đậm được dùng vẽ đường bao thấy, cạnh thấy. Nét đứt mảnh vẽ đường bao khuất."
+  },
+  {
+   "bai": 9,
+   "question": "Trong phương pháp chiếu góc thứ nhất (PPCG1, Bài 9), hình chiếu bằng (nhìn từ trên xuống) được bố trí ở vị trí nào?",
+   "options": [
+    "Ở phía dưới hình chiếu đứng",
+    "Ở phía trên hình chiếu đứng",
+    "Ở phía bên phải hình chiếu đứng",
+    "Ở phía bên trái hình chiếu đứng"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 9] Trong PPCG1, hình chiếu bằng B đặt ở phía dưới hình chiếu đứng A; hình chiếu cạnh C đặt ở bên phải hình chiếu đứng A."
+  },
+  {
+   "bai": 11,
+   "question": "Trong hình chiếu trục đo vuông góc đều (Bài 11), hệ số biến dạng theo các trục đo được quy ước lấy bằng bao nhiêu?",
+   "options": [
+    "p = q = r = 1",
+    "p = r = 1; q = 0.5",
+    "p = 1; q = r = 0.5",
+    "p = q = 1; r = 0.5"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 11] Trong HCTĐ vuông góc đều, góc trục đo x'O'y'=y'O'z'=z'O'x'=120 độ và quy ước lấy hệ số biến dạng p = q = r = 1 để thuận tiện cho việc dựng hình."
+  },
+  {
+   "bai": 18,
+   "question": "Theo SGK Công nghệ 10 (Bài 18), quy trình thiết kế kĩ thuật chuẩn gồm có bao nhiêu bước cơ bản?",
+   "options": [
+    "7 bước (Bắt đầu từ Xác định vấn đề đến Lập hồ sơ kĩ thuật)",
+    "5 bước (Bắt đầu từ Chế tạo phôi đến Đóng gói)",
+    "4 bước (Nạp, Nén, Nổ, Thải)",
+    "3 bước (Đầu vào, Xử lí, Đầu ra)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 18] Quy trình thiết kế kĩ thuật gồm 7 bước: 1. Xác định vấn đề -> 2. Tìm hiểu tổng quan -> 3. Xác định yêu cầu -> 4. Đề xuất, đánh giá, chọn giải pháp -> 5. Xây dựng nguyên mẫu -> 6. Kiểm chứng giải pháp -> 7. Lập hồ sơ kĩ thuật."
+  },
+  {
+   "bai": 6,
+   "question": "Cuộc Cách mạng công nghiệp lần thứ nhất (Bài 6) được đặc trưng cơ bản bởi thành tựu công nghệ nào?",
+   "options": [
+    "Động cơ hơi nước và cơ giới hóa sản xuất",
+    "Năng lượng điện và dây chuyền sản xuất hàng loạt",
+    "Công nghệ thông tin và tự động hóa điều khiển máy tính",
+    "Trí tuệ nhân tạo (AI) và Internet vạn vật (IoT)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 6] Đặc trưng của CMCN lần thứ nhất là năng lượng hơi nước và cơ giới hóa, khởi đầu từ nước Anh vào cuối thế kỉ XVIII."
+  },
+  {
+   "bai": 20,
+   "question": "Nguyên tắc 6R nhằm đảm bảo phát triển bền vững trong thiết kế kĩ thuật (Bài 20) KHÔNG bao gồm từ nào sau đây?",
+   "options": [
+    "Rebuild (Xây lại toàn bộ)",
+    "Recycle (Tái chế vật liệu)",
+    "Reduce (Tiết giảm vật liệu, năng lượng)",
+    "Repair (Thiết kế dễ sửa chữa)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 20] Nguyên tắc 6R gồm: Recycle, Reduce, Rethink, Repair, Reuse, Refuse."
+  },
+  {
+   "bai": 2,
+   "question": "Cấu trúc của một hệ thống kĩ thuật gồm có mấy thành phần chính (Bài 2)?",
+   "options": [
+    "3 thành phần: Đầu vào, Bộ phận xử lí, Đầu ra",
+    "2 thành phần: Đầu vào, Đầu ra",
+    "4 thành phần",
+    "5 thành phần"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 2] Gồm Đầu vào, Bộ phận xử lí và Đầu ra."
+  },
+  {
+   "bai": 8,
+   "question": "Khổ giấy vẽ kĩ thuật A4 có kích thước tiêu chuẩn là bao nhiêu (TCVN 7285:2003, Bài 8)?",
+   "options": [
+    "297 x 210 mm",
+    "420 x 297 mm",
+    "594 x 420 mm",
+    "841 x 594 mm"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 8] Kích thước A4 là 297 x 210 mm."
+  },
+  {
+   "bai": 8,
+   "question": "Nét liền đậm trong bản vẽ kĩ thuật (TCVN 8-24:2002) được dùng để vẽ đối tượng nào?",
+   "options": [
+    "Đường bao thấy, cạnh thấy",
+    "Đường kích thước, đường gióng",
+    "Đường tâm, trục đối xứng",
+    "Đường bao khuất"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 8] Nét liền đậm dùng vẽ đường bao thấy, cạnh thấy."
+  },
+  {
+   "bai": 11,
+   "question": "Trong hình chiếu trục đo vuông góc đều (Bài 11), hệ số biến dạng quy ước là:",
+   "options": [
+    "p = q = r = 1",
+    "p = r = 1, q = 0.5",
+    "p = 1, q = r = 0.5",
+    "p = q = 1, r = 0.5"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 11] Quy ước p = q = r = 1."
+  },
+  {
+   "bai": 18,
+   "question": "Quy trình thiết kế kĩ thuật chuẩn (Bài 18) gồm có bao nhiêu bước?",
+   "options": [
+    "7 bước (Từ Xác định vấn đề đến Lập hồ sơ kĩ thuật)",
+    "5 bước",
+    "4 bước",
+    "3 bước"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 10 - Bài 18] Gồm 7 bước tiêu chuẩn."
+  }
+ ],
+ "11-sgk-cong-nghe-11-cong-nghe-co-khi.md": [
+  {
+   "bai": 1,
+   "question": "Theo SGK Công nghệ 11 (Bài 1), quy trình chế tạo cơ khí một chi tiết máy gồm có bao nhiêu bước cơ bản?",
+   "options": [
+    "5 bước (Đọc bản vẽ chi tiết -> Chế tạo phôi -> Gia công chi tiết -> Xử lí bảo vệ bề mặt -> Lắp ráp và kiểm tra)",
+    "3 bước (Chuẩn bị, Gia công, Hoàn thiện)",
+    "7 bước (Xác định vấn đề đến Lập hồ sơ kĩ thuật)",
+    "4 bước (Nạp, Nén, Nổ, Thải)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 1] Quy trình chế tạo cơ khí gồm 5 bước cơ bản: Bước 1: Đọc bản vẽ chi tiết; Bước 2: Chế tạo phôi; Bước 3: Thực hiện gia công; Bước 4: Xử lí và bảo vệ bề mặt; Bước 5: Lắp ráp và kiểm tra."
+  },
+  {
+   "bai": 4,
+   "question": "Về mặt thành phần hóa học (Bài 4), Gang được định nghĩa là hợp kim của sắt và carbon trong đó hàm lượng carbon chiếm bao nhiêu %?",
+   "options": [
+    "Từ 2,14% đến 4,3%",
+    "Nhỏ hơn 2,14%",
+    "Từ 0,05% đến 1,0%",
+    "Lớn hơn 5,5%"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 4] Gang là hợp kim của sắt (Fe) và carbon (C), trong đó hàm lượng C chiếm từ 2,14% đến 4,3%."
+  },
+  {
+   "bai": 6,
+   "question": "Hợp kim nhớ hình Nitinol (Bài 6) được cấu tạo từ hai nguyên tố kim loại nào?",
+   "options": [
+    "Niken và Titan (Ni - Ti)",
+    "Đồng và Kẽm (Cu - Zn)",
+    "Sắt và Carbon (Fe - C)",
+    "Nhôm và Magie (Al - Mg)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 6] Hợp kim nhớ hình điển hình nhất là nitinol, một hợp kim của nickel (Ni) và titanium (Ti), có khả năng nhớ lại hình dạng ban đầu khi gia nhiệt."
+  },
+  {
+   "bai": 7,
+   "question": "Phương pháp gia công cơ khí nào sau đây thuộc nhóm phương pháp 'Gia công cơ khí KHÔNG phoi' (Bài 7)?",
+   "options": [
+    "Rèn, dập và đúc kim loại",
+    "Tiện mặt trụ ngoài",
+    "Phay rãnh chữ T",
+    "Khoan lỗ tròn"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 7] Gia công cơ khí không phoi gồm: đúc, rèn, dập nóng, dập nguội, cán, kéo, ép, hàn..."
+  },
+  {
+   "bai": 18,
+   "question": "Khái niệm 'Điểm chết trên' (ĐCT) của động cơ đốt trong kiểu piston (Bài 18) là vị trí mà tại đó:",
+   "options": [
+    "Đỉnh piston ở vị trí xa tâm trục khuỷu nhất",
+    "Đỉnh piston ở vị trí gần tâm trục khuỷu nhất",
+    "Bugi bắt đầu phóng tia lửa điện",
+    "Vận tốc di chuyển của piston đạt giá trị lớn nhất"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 18] Điểm chết trên (ĐCT) là vị trí mà tại đó đỉnh piston ở xa tâm trục khuỷu nhất và piston đổi chiều chuyển động."
+  },
+  {
+   "bai": 18,
+   "question": "Công thức liên hệ giữa hành trình của piston (S) và bán kính quay của trục khuỷu (R) trong động cơ đốt trong (Bài 18) là:",
+   "options": [
+    "S = 2 * R",
+    "S = R / 2",
+    "S = pi * R",
+    "S = 4 * R"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 18] Khi piston dịch chuyển 1 hành trình S thì trục khuỷu quay nửa vòng (180 độ), do đó S = 2 x R."
+  },
+  {
+   "bai": 18,
+   "question": "Trong chu trình làm việc của động cơ xăng 4 kì (Bài 18), kì nào là kì DUY NHẤT sinh công cơ học?",
+   "options": [
+    "Kì cháy và giãn nở (Kì nổ)",
+    "Kì nạp hòa khí",
+    "Kì nén hòa khí",
+    "Kì thải khí xả"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 18] Chu trình làm việc gồm 4 hành trình: nạp, nén, nổ, thải; trong đó chỉ có kì nổ (cháy giãn nở) sinh công qua thanh truyền làm quay trục khuỷu."
+  },
+  {
+   "bai": 22,
+   "question": "Bộ phận nào trong hệ thống truyền lực của ô tô (Bài 22) có nhiệm vụ phân chia mômen chủ động cho 2 bánh xe và cho phép chúng quay với vận tốc khác nhau khi xe quay vòng?",
+   "options": [
+    "Bộ vi sai",
+    "Hộp số chính",
+    "Bộ li hợp ma sát",
+    "Trục các đăng"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 22] Bộ vi sai có nhiệm vụ phân chia mômen chủ động đến các bánh xe chủ động, đồng thời cho phép các bánh xe quay với các vận tốc góc khác nhau khi vào cua."
+  },
+  {
+   "bai": 1,
+   "question": "Quy trình chế tạo cơ khí một chi tiết máy (Bài 1) gồm có mấy bước cơ bản?",
+   "options": [
+    "5 bước (Đọc bản vẽ -> Chế tạo phôi -> Gia công chi tiết -> Xử lí bề mặt -> Lắp ráp & kiểm tra)",
+    "3 bước",
+    "4 bước",
+    "7 bước"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 1] Gồm 5 bước cơ bản từ đọc bản vẽ đến lắp ráp, kiểm tra."
+  },
+  {
+   "bai": 4,
+   "question": "Gang là hợp kim của sắt và carbon trong đó hàm lượng carbon chiếm bao nhiêu (Bài 4)?",
+   "options": [
+    "Từ 2,14% đến 4,3%",
+    "Nhỏ hơn 2,14%",
+    "Từ 0,1% đến 1,0%",
+    "Lớn hơn 5,0%"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 4] Gang có hàm lượng carbon từ 2,14% đến 4,3%."
+  },
+  {
+   "bai": 6,
+   "question": "Hợp kim nhớ hình Nitinol (Bài 6) được tạo thành từ hai kim loại nào?",
+   "options": [
+    "Niken và Titan (Ni - Ti)",
+    "Đồng và Kẽm (Cu - Zn)",
+    "Sắt và Carbon (Fe - C)",
+    "Nhôm và Magie"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 6] Nitinol là hợp kim của niken và titan."
+  },
+  {
+   "bai": 18,
+   "question": "Công thức liên hệ giữa hành trình piston (S) và bán kính quay trục khuỷu (R) (Bài 18) là:",
+   "options": [
+    "S = 2 * R",
+    "S = R / 2",
+    "S = pi * R",
+    "S = 4 * R"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 18] S = 2 x R."
+  },
+  {
+   "bai": 18,
+   "question": "Kì duy nhất sinh công trong chu trình làm việc của động cơ 4 kì (Bài 18) là:",
+   "options": [
+    "Kì cháy và giãn nở (Kì nổ)",
+    "Kì nạp",
+    "Kì nén",
+    "Kì thải"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 11 - Bài 18] Kì nổ (cháy giãn nở) đẩy piston sinh công."
+  }
+ ],
+ "12-sgk-cong-nghe-12-cong-nghe-dien-dien-tu.md": [
+  {
+   "bai": 3,
+   "question": "Trong mạch điện xoay chiều 3 pha đối xứng nối hình sao (Y) (Bài 3), mối quan hệ giữa các đại lượng dây và pha là:",
+   "options": [
+    "Id = Ip và Ud = căn(3) * Up",
+    "Ud = Up và Id = căn(3) * Ip",
+    "Ud = Up và Id = Ip",
+    "Ud = 3 * Up và Id = Ip / 3"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 3] Đối với tải nối hình sao đối xứng: Id = Ip và Ud = căn(3) * Up."
+  },
+  {
+   "bai": 4,
+   "question": "Theo quy định cấp điện áp của hệ thống điện quốc gia Việt Nam (Bài 4), lưới điện truyền tải là lưới điện có điện áp:",
+   "options": [
+    "Trên 110 kV",
+    "Từ 110 kV trở xuống",
+    "Dưới 1 kV",
+    "Từ 22 kV đến 35 kV"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 4] Lưới điện truyền tải có điện áp trên 110 kV (như 220 kV, 500 kV); lưới điện phân phối có điện áp từ 110 kV trở xuống."
+  },
+  {
+   "bai": 7,
+   "question": "Mạng điện hạ áp dùng trong sinh hoạt của các hộ gia đình ở Việt Nam (Bài 7) có thông số kỹ thuật định mức chuẩn là:",
+   "options": [
+    "380 / 220 V, tần số 50 Hz",
+    "220 / 110 V, tần số 60 Hz",
+    "500 / 220 V, tần số 50 Hz",
+    "110 / 12 V, tần số 50 Hz"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 7] Điện áp định mức mạng hạ áp sinh hoạt Việt Nam là 380/220 V, tần số điện lưới 50 Hz, sai số cho phép +-5%."
+  },
+  {
+   "bai": 9,
+   "question": "Tiết diện ruột dẫn của dây điện (S, mm2) trong hệ thống điện gia đình (Bài 9) được tính toán theo công thức nào?",
+   "options": [
+    "S = I / J (với J là mật độ dòng điện cho phép từ 4 đến 8 A/mm2)",
+    "S = I * U * cos(phi)",
+    "S = 2 * pi * f * L",
+    "S = U / (R1 + R2)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 9] Tiết diện dây dẫn S = I / J, trong đó I là dòng điện chạy qua dây, J là mật độ dòng cho phép (dây đồng thường từ 4 đến 8 A/mm2)."
+  },
+  {
+   "bai": 15,
+   "question": "Dung kháng của tụ điện (Xc) đối với dòng điện xoay chiều tần số f (Bài 15) được tính theo biểu thức nào?",
+   "options": [
+    "Xc = 1 / (2 * pi * f * C)",
+    "Xc = 2 * pi * f * C",
+    "Xc = 2 * pi * f * L",
+    "Xc = R / (1 + f * C)"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 15] Dung kháng Xc = 1 / (2*pi*f*C), đặc trưng cho sự cản trở dòng điện xoay chiều của tụ điện."
+  },
+  {
+   "bai": 19,
+   "question": "Hệ số khuếch đại điện áp của mạch khuếch đại đảo sử dụng Op-Amp LM741 (Bài 19) được xác định bằng công thức:",
+   "options": [
+    "G = - (R2 / R1)",
+    "G = 1 + (R2 / R1)",
+    "G = R1 / R2",
+    "G = R1 + R2"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 19] Hệ số khuếch đại mạch đảo là G = - (R2 / R1), dấu trừ biểu thị tín hiệu ngõ ra ngược pha với ngõ vào."
+  },
+  {
+   "bai": 21,
+   "question": "Cổng logic AND 2 ngõ vào (Bài 21) cho tín hiệu ngõ ra y = 1 khi nào?",
+   "options": [
+    "Khi cả hai ngõ vào x1 và x2 đều bằng 1",
+    "Khi ít nhất một trong hai ngõ vào bằng 1",
+    "Khi cả hai ngõ vào đều bằng 0",
+    "Khi hai ngõ vào có giá trị logic trái dấu nhau"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 21] Hàm logic cổng AND là y = x1 . x2. Ngõ ra chỉ bằng 1 khi cả hai ngõ vào đều bằng 1."
+  },
+  {
+   "bai": 25,
+   "question": "Bo mạch lập trình Arduino Uno R3 thông dụng (Bài 25) sử dụng chip vi điều khiển nào sau đây?",
+   "options": [
+    "ATmega328P",
+    "Intel 8051",
+    "PIC16F877A",
+    "ARM Cortex-M4"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 25] Bo mạch Arduino Uno R3 sử dụng vi điều khiển ATmega328P của hãng Atmel/Microchip."
+  },
+  {
+   "bai": 3,
+   "question": "Trong mạch điện 3 pha đối xứng nối hình sao (Y) (Bài 3), mối quan hệ đại lượng dây và pha là:",
+   "options": [
+    "Id = Ip và Ud = căn(3) * Up",
+    "Ud = Up và Id = căn(3) * Ip",
+    "Ud = Up và Id = Ip",
+    "Ud = 3 * Up"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 3] Mạch sao đối xứng có Id = Ip và Ud = căn(3) * Up."
+  },
+  {
+   "bai": 4,
+   "question": "Lưới điện truyền tải của hệ thống điện quốc gia (Bài 4) có cấp điện áp:",
+   "options": [
+    "Trên 110 kV",
+    "Từ 110 kV trở xuống",
+    "Dưới 1 kV",
+    "Từ 22 kV đến 35 kV"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 4] Lưới truyền tải có điện áp > 110 kV; lưới phân phối <= 110 kV."
+  },
+  {
+   "bai": 7,
+   "question": "Mạng điện hạ áp dùng trong sinh hoạt tại Việt Nam (Bài 7) có thông số kỹ thuật định mức là:",
+   "options": [
+    "380 / 220 V, tần số 50 Hz",
+    "220 / 110 V, tần số 60 Hz",
+    "500 / 220 V, tần số 50 Hz",
+    "110 / 12 V, 50 Hz"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 7] Điện áp 380/220 V, tần số 50 Hz."
+  },
+  {
+   "bai": 19,
+   "question": "Hệ số khuếch đại điện áp của mạch khuếch đại đảo dùng Op-Amp LM741 (Bài 19) là:",
+   "options": [
+    "G = - (R2 / R1)",
+    "G = 1 + (R2 / R1)",
+    "G = R1 / R2",
+    "G = R1 + R2"
+   ],
+   "answer": 0,
+   "explanation": "[Nguồn: SGK Công nghệ 12 - Bài 19] G = - (R2 / R1), ngược pha."
+  }
+ ]
+}
