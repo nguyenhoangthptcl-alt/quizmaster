@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giáo viên - AI QuizMaster</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .inp { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: .75rem; padding: .5rem .75rem; font-size: .875rem; color: #fff; outline: none; }
+    .inp:focus { border-color: #a855f7; }
+    .lbl { display: block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; margin-bottom: .25rem; }
+    .btn { padding: .5rem 1rem; border-radius: .75rem; font-size: .8rem; font-weight: 700; transition: all .15s; }
+    .btn-p { background: #7c3aed; color: #fff; } .btn-p:hover { background: #6d28d9; }
+    .btn-g { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; } .btn-g:hover { background: #334155; }
+    .btn-r { background: #7f1d1d; color: #fecaca; } .btn-r:hover { background: #991b1b; }
+    .btn-ok { background: #047857; color: #fff; } .btn-ok:hover { background: #059669; }
+    .card { background: #020617; border: 1px solid #1e293b; border-radius: 1rem; }
+    .navtab { padding: .5rem .85rem; border-radius: .6rem; font-size: .8rem; font-weight: 600; color: #cbd5e1; white-space: nowrap; }
+    .navtab:hover { background: #1e293b; color: #fff; }
+    .navtab.on { background: #7c3aed; color: #fff; font-weight: 800; }
+    .mode-pill { padding: .35rem .7rem; border-radius: 999px; font-size: .72rem; font-weight: 700; border: 1px solid #334155; color: #cbd5e1; cursor: pointer; }
+    .mode-pill.on { background: #7c3aed; border-color: #a855f7; color: #fff; }
+    .mode-pill.off { opacity: .35; cursor: not-allowed; }
+    th { text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; padding: .5rem .6rem; }
+    td { padding: .5rem .6rem; font-size: .8rem; border-top: 1px solid #1e293b; vertical-align: middle; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-xl">Q</div>
+        <div class="leading-tight">
+          <div class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-300 bg-clip-text text-transparent">AI QuizMaster</div>
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Cổng giáo viên</div>
+        </div>
+      </div>
+      <nav id="main-nav" class="hidden items-center gap-1 overflow-x-auto">
+        <button class="navtab" data-view="create">✨ Tạo đề</button>
+        <button class="navtab" data-view="library">📚 Đề của tôi</button>
+        <button class="navtab" data-view="room">🏆 Phòng thi</button>
+        <button class="navtab" data-view="books">📖 Tài liệu SGK</button>
+        <button class="navtab" data-view="settings">⚙️ Cài đặt</button>
+        <button class="navtab hidden" id="nav-admin" data-view="admin">🛡️ Quản lý tài khoản</button>
+      </nav>
+      <div id="user-chip" class="hidden items-center gap-2 shrink-0">
+        <div class="text-right leading-tight hidden sm:block">
+          <div class="text-xs font-bold text-white" id="chip-name"></div>
+          <div class="text-[10px] text-slate-400" id="chip-role"></div>
+        </div>
+        <button id="btn-sound" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700" title="Âm thanh"><span id="sound-icon">🔊</span></button>
+        <button id="btn-logout" class="btn btn-g">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- Chưa cấu hình Firebase -->
+    <section id="scr-noconfig" class="hidden max-w-2xl mx-auto card p-8 space-y-3 border-amber-700/50">
+      <div class="text-5xl text-center">🛠️</div>
+      <h2 class="text-xl font-black text-center">Chưa kết nối Firebase</h2>
+      <p class="text-sm text-slate-300">Để có tài khoản đăng nhập và phòng thi online, thầy cần tạo dự án Firebase miễn phí và dán thông số vào file <code class="text-yellow-300">config.js</code>. Làm theo <strong>HUONG_DAN.md</strong> (Bước 1), mất khoảng 5 phút.</p>
+    </section>
+
+    <!-- Đăng nhập / Đăng ký -->
+    <section id="scr-auth" class="hidden max-w-md mx-auto space-y-4">
+      <div class="card p-6 sm:p-8 space-y-5 shadow-2xl">
+        <div class="text-center space-y-1">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center mx-auto text-2xl">🎓</div>
+          <h1 class="text-2xl font-black">Cổng giáo viên</h1>
+          <p class="text-xs text-slate-400">Đăng nhập để tạo đề và tổ chức phòng thi</p>
+        </div>
+        <div class="grid grid-cols-2 gap-1 bg-slate-900 p-1 rounded-xl">
+          <button id="tab-login" class="navtab on text-center">Đăng nhập</button>
+          <button id="tab-register" class="navtab text-center">Đăng ký</button>
+        </div>
+        <form id="form-login" class="space-y-3" autocomplete="on">
+          <div><label class="lbl">Tên đăng nhập</label><input id="lg-user" class="inp" autocomplete="username" autocapitalize="none" placeholder="vd: thayhoang"></div>
+          <div><label class="lbl">Mật khẩu</label><input id="lg-pass" type="password" class="inp" autocomplete="current-password"></div>
+          <button type="submit" class="btn btn-p w-full py-3" id="btn-login">Đăng nhập</button>
+        </form>
+        <form id="form-register" class="hidden space-y-3" autocomplete="off">
+          <div><label class="lbl">Họ tên hiển thị</label><input id="rg-display" class="inp" maxlength="40" placeholder="vd: Thầy Hoàng"></div>
+          <div><label class="lbl">Tên đăng nhập</label><input id="rg-user" class="inp" autocapitalize="none" maxlength="20" placeholder="chữ thường, số, gạch dưới (3-20 ký tự)"></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="lbl">Mật khẩu</label><input id="rg-pass" type="password" class="inp" autocomplete="new-password" placeholder="≥ 6 ký tự"></div>
+            <div><label class="lbl">Nhập lại</label><input id="rg-pass2" type="password" class="inp" autocomplete="new-password"></div>
+          </div>
+          <button type="submit" class="btn btn-p w-full py-3" id="btn-register">Tạo tài khoản</button>
+          <p class="text-[11px] text-slate-400 leading-relaxed">Tài khoản mới cần Admin duyệt trước khi sử dụng (trừ khi Admin bật tự duyệt). Người đăng ký đầu tiên của hệ thống sẽ tự động là Admin.</p>
+        </form>
+        <p id="auth-error" class="hidden text-sm text-rose-400 font-semibold text-center"></p>
+      </div>
+      <p class="text-center text-xs text-slate-500">Học sinh vào thi tại <a href="index.html" class="underline text-slate-300">trang học sinh</a></p>
+    </section>
+
+    <!-- Chờ duyệt / Bị khóa -->
+    <section id="scr-pending" class="hidden max-w-md mx-auto card p-8 text-center space-y-4">
+      <div class="text-5xl" id="pending-icon">⏳</div>
+      <h2 class="text-xl font-black" id="pending-title">Tài khoản đang chờ Admin duyệt</h2>
+      <p class="text-sm text-slate-300" id="pending-text">Khi Admin duyệt, thầy/cô bấm “Kiểm tra lại” để vào hệ thống.</p>
+      <div class="flex justify-center gap-2"><button id="btn-recheck" class="btn btn-p">Kiểm tra lại</button><button class="btn btn-g btn-logout2">Đăng xuất</button></div>
+    </section>
+
+    <!-- ỨNG DỤNG -->
+    <div id="app" class="hidden">
+
+      <!-- ========== TẠO ĐỀ ========== -->
+      <section id="view-create" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 card p-5 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold flex items-center gap-2"><span class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">1</span>Thông tin đề</h2>
+            <span id="ai-badge" class="text-[11px] px-2 py-0.5 rounded border border-slate-700 text-slate-400">AI: chưa có API key</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="lbl">Môn học</label><select id="ai-subject" class="inp font-semibold"></select></div>
+            <div><label class="lbl">Khối lớp</label><select id="ai-grade" class="inp font-semibold"></select></div>
+          </div>
+
+          <div>
+            <label class="lbl">Sách / tài liệu</label>
+            <select id="ai-book" class="inp"></select>
+            <div id="book-none" class="hidden mt-2 p-3 rounded-xl bg-amber-950/40 border border-amber-700/40 text-xs text-amber-200 space-y-2">
+              <p>Chưa có tài liệu cho <b id="bn-subject"></b> - <b id="bn-grade"></b>. Thêm file SGK (.md/.txt) để AI ra đề theo từng bài/chương, hoặc dùng chế độ <b>Tự nhập nội dung</b>.</p>
+              <button type="button" class="btn btn-g" id="btn-add-book-here">➕ Thêm tài liệu cho môn này</button>
+            </div>
+          </div>
+
+          <!-- PHẠM VI KIẾN THỨC -->
+          <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/50 space-y-3">
+            <div class="text-xs font-bold text-purple-300 flex items-center gap-1.5">🎯 Phạm vi kiến thức của đề</div>
+            <div id="mode-pills" class="flex flex-wrap gap-1.5">
+              <span class="mode-pill" data-mode="lesson">Theo bài</span>
+              <span class="mode-pill" data-mode="chapter">Theo chương</span>
+              <span class="mode-pill" data-mode="multi">Nhiều bài tự chọn</span>
+              <span class="mode-pill" data-mode="all">Cả cuốn</span>
+              <span class="mode-pill" data-mode="free">Tự nhập nội dung</span>
+            </div>
+            <div id="scope-lesson" class="hidden"><select id="sel-lesson" class="inp"></select></div>
+            <div id="scope-chapter" class="hidden"><select id="sel-chapter" class="inp"></select></div>
+            <div id="scope-multi" class="hidden">
+              <div class="flex gap-2 mb-2"><button type="button" class="btn btn-g !py-1" id="multi-all">Chọn hết</button><button type="button" class="btn btn-g !py-1" id="multi-none">Bỏ chọn</button></div>
+              <div id="multi-box" class="max-h-56 overflow-y-auto space-y-2 pr-1 text-xs"></div>
+            </div>
+            <div id="scope-summary" class="text-xs text-emerald-300 font-semibold"></div>
+            <div id="scope-warn" class="hidden text-xs text-amber-300 bg-amber-950/40 border border-amber-700/40 rounded-lg p-2"></div>
+          </div>
+
+          <div><label class="lbl">Tên bài kiểm tra</label><input id="ai-topic" class="inp" placeholder="Tự điền theo phạm vi, có thể sửa"></div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="lbl">Số câu</label>
+              <select id="ai-count" class="inp"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></div>
+            <div><label class="lbl">Mức độ</label>
+              <select id="ai-diff" class="inp"><option value="Hỗn hợp (Nhận biết đến Vận dụng)">Hỗn hợp</option><option value="Nhận biết - Thông hiểu">Cơ bản</option><option value="Vận dụng - Nâng cao">Nâng cao</option></select></div>
+          </div>
+
+          <details id="scope-details" class="group">
+            <summary class="cursor-pointer text-xs font-bold text-slate-300 select-none">📄 Nội dung AI được phép dùng (xem / bổ sung / sửa) <span id="scope-chars" class="text-slate-500 font-normal"></span></summary>
+            <p class="text-[11px] text-slate-400 mt-2">AI <b>chỉ</b> được ra câu hỏi từ khung này. Thầy có thể dán thêm nội dung bài học để câu hỏi phong phú hơn.</p>
+            <textarea id="scope-text" rows="9" class="inp mt-2 font-mono text-xs leading-relaxed"></textarea>
+          </details>
+
+          <div class="space-y-2 pt-1">
+            <button id="btn-generate" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 disabled:opacity-60">
+              <span id="gen-spin" class="hidden animate-spin">🌀</span><span id="gen-text">✨ Tạo đề bằng AI theo phạm vi đã chọn</span>
+            </button>
+            <div class="flex gap-2">
+              <button id="btn-sample" class="btn btn-g flex-1">⚡ Lấy câu mẫu (không cần AI)</button>
+              <button id="btn-add-q" class="btn btn-g flex-1">➕ Thêm câu thủ công</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 card p-5 sm:p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4 mb-4">
+              <div>
+                <h2 class="text-lg font-bold flex items-center gap-2"><span class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold">2</span>Danh sách câu hỏi (<span id="q-count">0</span>)</h2>
+                <p class="text-xs text-slate-400" id="q-meta">Chưa có câu hỏi.</p>
+              </div>
+              <div class="flex gap-2">
+                <button id="btn-export" class="btn btn-g">💾 Xuất JSON</button>
+                <button id="btn-import" class="btn btn-g">📂 Nhập JSON</button>
+                <input type="file" id="file-import" accept=".json" class="hidden">
+              </div>
+            </div>
+            <div id="q-list" class="space-y-3 max-h-[560px] overflow-y-auto pr-2"></div>
+          </div>
+          <div class="pt-5 mt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <button id="btn-save-quiz" class="btn btn-g py-3">💾 Lưu vào “Đề của tôi”</button>
+            <button id="btn-open-room" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-xl">🚀 Mở phòng thi với bộ đề này</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== THƯ VIỆN ========== -->
+      <section id="view-library" class="hidden space-y-4">
+        <div class="flex items-center justify-between"><h2 class="text-xl font-black">📚 Đề của tôi</h2><span class="text-xs text-slate-400" id="lib-count"></span></div>
+        <div id="lib-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+
+      <!-- ========== PHÒNG THI ========== -->
+      <section id="view-room" class="hidden space-y-5">
+        <div id="room-none" class="card p-8 text-center space-y-3">
+          <div class="text-5xl">🏆</div>
+          <h2 class="text-lg font-bold">Chưa có phòng thi nào đang mở</h2>
+          <p class="text-sm text-slate-400">Vào tab “Tạo đề” hoặc “Đề của tôi”, chọn bộ đề rồi bấm “Mở phòng thi”.</p>
+          <div id="room-resume" class="hidden p-4 rounded-xl bg-amber-950/40 border border-amber-700/40 text-sm space-y-2">
+            <p>Phòng <b class="font-mono text-yellow-300" id="resume-pin"></b> vẫn đang mở từ lần trước.</p>
+            <div class="flex justify-center gap-2"><button id="btn-resume" class="btn btn-ok">Tiếp tục điều khiển</button><button id="btn-resume-close" class="btn btn-r">Đóng phòng</button></div>
+          </div>
+        </div>
+
+        <div id="host-lobby" class="hidden card p-6 sm:p-8 border-purple-500/30 text-center space-y-6">
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-200" id="lobby-title"></h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center max-w-3xl mx-auto">
+            <div class="py-6 px-6 rounded-2xl bg-gradient-to-br from-slate-900 to-purple-950/40 border border-purple-500/40">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Mã phòng</p>
+              <div class="text-5xl sm:text-7xl font-black tracking-widest text-yellow-400 font-mono" id="lobby-pin"></div>
+            </div>
+            <div class="space-y-2">
+              <div id="qr-box" class="mx-auto w-[160px] h-[160px] bg-white p-2 rounded-xl"></div>
+              <p class="text-[11px] text-slate-400">Học sinh quét mã QR hoặc vào link:</p>
+              <input id="lobby-link" readonly class="inp text-center text-xs font-mono select-all">
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <button id="btn-copy-pin" class="btn btn-g">📋 Chép mã</button>
+            <button id="btn-copy-link" class="btn btn-g">🔗 Chép link kèm mã</button>
+            <button id="btn-open-stu" class="btn btn-g">↗️ Mở trang học sinh (thử)</button>
+            <button id="btn-bots" class="btn btn-g">🤖 Thêm 3 học sinh ảo</button>
+            <label class="text-xs text-slate-400 flex items-center gap-1">⏱ Mỗi câu
+              <select id="lobby-time" class="inp !w-auto !py-1.5"><option value="10">10 giây</option><option value="20" selected>20 giây</option><option value="30">30 giây</option><option value="45">45 giây</option><option value="60">60 giây</option></select></label>
+          </div>
+          <div class="pt-4 border-t border-slate-800">
+            <div class="text-sm font-bold text-slate-300 mb-3">Học sinh trong phòng: <span id="lobby-count" class="text-purple-400 text-base font-extrabold">0</span></div>
+            <div id="lobby-grid" class="flex flex-wrap justify-center gap-2 min-h-[80px] p-4 bg-slate-900/50 rounded-2xl border border-slate-800"></div>
+          </div>
+          <div class="flex flex-wrap justify-center gap-3">
+            <button id="btn-start" class="px-10 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-green-600 text-white font-black text-lg shadow-2xl">▶️ BẮT ĐẦU</button>
+            <button class="btn btn-r btn-close-room">Đóng phòng</button>
+          </div>
+          <p class="text-[11px] text-slate-500">Giữ trang này mở trong suốt buổi thi (máy thầy là máy điều khiển).</p>
+        </div>
+
+        <div id="host-question" class="hidden card p-6 sm:p-8 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 rounded-full bg-purple-900/70 border border-purple-700 text-purple-300 font-bold text-sm" id="hq-index"></span>
+              <span class="text-xs font-semibold text-slate-400">Đã trả lời: <strong class="text-emerald-400 text-sm" id="hq-answered">0</strong> / <span id="hq-total">0</span></span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full border-4 border-yellow-500/40 bg-yellow-950/40 flex items-center justify-center font-black text-xl text-yellow-400" id="hq-timer">20</div>
+              <button id="btn-skip" class="btn btn-g">Hết giờ ⏭️</button>
+            </div>
+          </div>
+          <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-relaxed text-center" id="hq-text"></h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="hq-options"></div>
+        </div>
+
+        <div id="host-result" class="hidden card p-6 sm:p-8 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <h3 class="text-lg font-bold text-slate-200">Kết quả câu hỏi</h3>
+            <button id="btn-next" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-sm shadow-lg">Câu tiếp theo ➡️</button>
+          </div>
+          <div class="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex items-start gap-3">
+            <span class="text-2xl">✅</span>
+            <div><p class="font-bold text-white">Đáp án: <span class="text-emerald-400" id="hr-correct"></span></p><p class="text-xs text-emerald-300/80 mt-1" id="hr-exp"></p></div>
+          </div>
+          <div id="hr-votes" class="grid grid-cols-4 gap-2 text-center text-xs"></div>
+          <div class="space-y-2"><h4 class="text-sm font-bold uppercase tracking-wider text-slate-400">Bảng xếp hạng</h4><div id="hr-board" class="space-y-2"></div></div>
+        </div>
+
+        <div id="host-podium" class="hidden card p-6 sm:p-8 border-purple-500/30 text-center space-y-8">
+          <div class="space-y-2">
+            <div class="inline-flex text-xs font-bold uppercase tracking-wider text-yellow-400 bg-yellow-950/60 border border-yellow-700/50 px-4 py-1 rounded-full">🎉 Vinh danh</div>
+            <h2 class="text-3xl sm:text-4xl font-black">Bục vinh quang</h2>
+          </div>
+          <div class="flex items-end justify-center gap-2 sm:gap-6 pt-6 max-w-2xl mx-auto">
+            <div class="flex-1 flex flex-col items-center"><div class="text-2xl mb-1" id="pd-av-2">🥈</div><div class="font-bold text-sm truncate max-w-[120px]" id="pd-name-2"></div><div class="text-xs text-purple-400 font-semibold mb-2" id="pd-sc-2"></div><div class="w-full h-32 sm:h-40 rounded-t-2xl bg-gradient-to-t from-slate-800 to-slate-700 border-t-4 border-slate-400 flex items-center justify-center font-black text-3xl text-slate-300">2</div></div>
+            <div class="flex-1 flex flex-col items-center"><div class="text-4xl mb-1 animate-bounce" id="pd-av-1">👑</div><div class="font-black text-base text-yellow-300 truncate max-w-[140px]" id="pd-name-1"></div><div class="text-sm text-yellow-400 font-bold mb-2" id="pd-sc-1"></div><div class="w-full h-44 sm:h-56 rounded-t-2xl bg-gradient-to-t from-yellow-700 via-amber-600 to-yellow-500 border-t-4 border-yellow-300 flex items-center justify-center font-black text-4xl text-yellow-100">1</div></div>
+            <div class="flex-1 flex flex-col items-center"><div class="text-2xl mb-1" id="pd-av-3">🥉</div><div class="font-bold text-sm truncate max-w-[120px]" id="pd-name-3"></div><div class="text-xs text-amber-500 font-semibold mb-2" id="pd-sc-3"></div><div class="w-full h-24 sm:h-32 rounded-t-2xl bg-gradient-to-t from-amber-900 to-amber-800 border-t-4 border-amber-600 flex items-center justify-center font-black text-2xl text-amber-300">3</div></div>
+          </div>
+          <div class="max-w-xl mx-auto text-left"><h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Bảng điểm toàn lớp</h4><div id="pd-table" class="bg-slate-900 rounded-xl border border-slate-800 divide-y divide-slate-800 text-sm"></div></div>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <button id="btn-csv" class="btn btn-ok py-3">📊 Tải bảng điểm (CSV)</button>
+            <button id="btn-replay" class="btn btn-p py-3">🔄 Tổ chức lại (mã mới)</button>
+            <button class="btn btn-r py-3 btn-close-room">Đóng phòng</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== TÀI LIỆU SGK ========== -->
+      <section id="view-books" class="hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div><h2 class="text-xl font-black">📖 Tài liệu SGK</h2><p class="text-xs text-slate-400">Mỗi tài liệu được tách thành Chương → Bài để AI chỉ ra đề đúng phạm vi đã chọn.</p></div>
+          <button id="btn-add-book" class="btn btn-p">➕ Thêm tài liệu</button>
+        </div>
+        <div id="books-list" class="space-y-3"></div>
+      </section>
+
+      <!-- ========== CÀI ĐẶT ========== -->
+      <section id="view-settings" class="hidden max-w-3xl mx-auto space-y-6">
+        <div class="card p-6 space-y-4">
+          <h2 class="text-lg font-bold">🤖 Google Gemini API Key</h2>
+          <p class="text-xs text-slate-400">Khóa được lưu trong tài khoản của thầy (chỉ thầy đọc được), dùng được trên mọi máy sau khi đăng nhập.</p>
+          <div><label class="lbl">API Key</label><input id="st-key" type="password" class="inp" placeholder="AIzaSy..." autocomplete="off"></div>
+          <div><label class="lbl">Tên mô hình (để trống = mặc định)</label><input id="st-model" class="inp font-mono" placeholder="gemini-3.6-flash"></div>
+          <div class="flex flex-wrap gap-2"><button id="st-save" class="btn btn-p">Lưu</button><button id="st-test" class="btn btn-g">Kiểm tra kết nối AI</button><button id="st-clear" class="btn btn-r">Xóa key</button></div>
+          <p class="text-xs text-slate-400">Lấy key miễn phí tại <a class="underline text-yellow-300" target="_blank" rel="noopener" href="https://aistudio.google.com/">Google AI Studio</a>. Nếu báo lỗi “model not found”, app tự thử các tên mô hình dự phòng.</p>
+          <p id="st-msg" class="text-xs text-emerald-300"></p>
+        </div>
+        <div class="card p-6 space-y-4">
+          <h2 class="text-lg font-bold">🔑 Đổi mật khẩu</h2>
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div><label class="lbl">Mật khẩu hiện tại</label><input id="pw-old" type="password" class="inp" autocomplete="current-password"></div>
+            <div><label class="lbl">Mật khẩu mới</label><input id="pw-new" type="password" class="inp" autocomplete="new-password"></div>
+            <div><label class="lbl">Nhập lại</label><input id="pw-new2" type="password" class="inp" autocomplete="new-password"></div>
+          </div>
+          <button id="pw-save" class="btn btn-p">Đổi mật khẩu</button>
+        </div>
+      </section>
+
+      <!-- ========== ADMIN ========== -->
+      <section id="view-admin" class="hidden space-y-6">
+        <div class="card p-5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-lg font-bold">🛡️ Quản lý tài khoản</h2>
+            <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer"><input type="checkbox" id="ad-auto" class="accent-purple-500"> Cho phép đăng ký tự duyệt (không cần Admin duyệt)</label>
+          </div>
+          <div class="overflow-x-auto"><table class="w-full" id="ad-table"><thead><tr><th>Tên đăng nhập</th><th>Họ tên</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <div class="card p-5 space-y-3">
+          <h3 class="font-bold">➕ Tạo tài khoản mới</h3>
+          <div class="grid sm:grid-cols-5 gap-3 items-end">
+            <div><label class="lbl">Tên đăng nhập</label><input id="ad-u" class="inp" autocapitalize="none"></div>
+            <div><label class="lbl">Họ tên</label><input id="ad-d" class="inp"></div>
+            <div><label class="lbl">Mật khẩu tạm</label><input id="ad-p" class="inp" type="text" autocomplete="off"></div>
+            <div><label class="lbl">Vai trò</label><select id="ad-r" class="inp"><option value="teacher">Giáo viên</option><option value="admin">Admin</option></select></div>
+            <button id="ad-create" class="btn btn-p">Tạo</button>
+          </div>
+        </div>
+        <div class="card p-5 space-y-3">
+          <div class="flex items-center justify-between"><h3 class="font-bold">🏆 Phòng thi đang tồn tại</h3><button id="ad-rooms-refresh" class="btn btn-g">Tải lại</button></div>
+          <div class="overflow-x-auto"><table class="w-full" id="ad-rooms"><thead><tr><th>Mã</th><th>Tên đề</th><th>Giáo viên</th><th>Tạo lúc</th><th></th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL THÊM TÀI LIỆU -->
+  <div id="modal-book" class="hidden fixed inset-0 z-50 bg-black/70 flex items-start justify-center overflow-y-auto p-4">
+    <div class="card w-full max-w-2xl p-6 my-6 space-y-4">
+      <div class="flex items-center justify-between"><h3 class="text-lg font-bold">➕ Thêm tài liệu SGK</h3><button id="mb-close" class="text-slate-400 hover:text-white text-xl">✕</button></div>
+      <div class="grid sm:grid-cols-3 gap-3">
+        <div><label class="lbl">Môn học</label><select id="mb-subject" class="inp"></select></div>
+        <div><label class="lbl">Khối lớp</label><select id="mb-grade" class="inp"></select></div>
+        <div><label class="lbl">Tên sách</label><input id="mb-title" class="inp" placeholder="vd: Toán 10 - KNTT"></div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="mb-pick" class="btn btn-g">📂 Chọn file .md / .txt</button>
+        <input type="file" id="mb-file" accept=".md,.txt,text/markdown,text/plain" class="hidden">
+        <button id="mb-sample" class="btn btn-g">⬇️ Tải file mẫu cấu trúc</button>
+        <span id="mb-filename" class="text-xs text-slate-400"></span>
+      </div>
+      <div><label class="lbl">Hoặc dán nội dung vào đây</label><textarea id="mb-text" rows="8" class="inp font-mono text-xs" placeholder="### CHƯƠNG I: Tên chương&#10;- **Bài 1: Tên bài**&#10;  - Nội dung kiến thức..."></textarea></div>
+      <div id="mb-preview" class="text-xs p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">Chưa có nội dung.</div>
+      <p class="text-[11px] text-slate-400 leading-relaxed">Cấu trúc nhận diện: dòng <code class="text-yellow-300">CHƯƠNG … : tên</code> bắt đầu một chương; dòng <code class="text-yellow-300">Bài N: tên</code> (có thể là gạch đầu dòng đậm hoặc tiêu đề #) bắt đầu một bài; các dòng sau đó là nội dung của bài đó. Tài liệu được chia sẻ cho các giáo viên trong hệ thống.</p>
+      <div class="flex justify-end gap-2"><button id="mb-cancel" class="btn btn-g">Hủy</button><button id="mb-save" class="btn btn-p">Lưu tài liệu</button></div>
+    </div>
+  </div>
+
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">AI QuizMaster &copy; 2026 • Cổng giáo viên</footer>
+
+  <script src="config.js"></script>
+  <script src="common.js"></script>
+  <script src="sgk.js"></script>
+  <script src="giaovien.js"></script>
+</body>
+</html>
