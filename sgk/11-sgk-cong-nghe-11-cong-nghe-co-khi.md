@@ -541,4 +541,292 @@
 - **Hộp số tự động:** khi dừng xe đạp phanh dừng hẳn rồi chuyển cần số về vị trí đỗ xe **(P)**.
 - **Bảo dưỡng định kì:** kiểm tra, điều chỉnh hành trình bàn đạp li hợp; thay dầu bôi trơn các bộ phận; thay đĩa ma sát khi mòn quá giới hạn; nếu chuyển số khó hoặc có tiếng ồn bất thường phải đưa tới cơ sở kĩ thuật. Mục đích: hoạt động tốt, an toàn, kéo dài tuổi thọ, hạn chế phát thải và giảm chi phí sửa chữa.
 - Ở tay số thấp (tỉ số truyền lớn): xe có lực kéo lớn, khắc phục lực cản tốt nhưng không đạt tốc độ cao.
+# BÀI 23: BÁNH XE VÀ HỆ THỐNG TREO
+
+## I - BÁNH XE Ô TÔ
+
+Bánh xe là bộ phận của ô tô tiếp xúc với mặt đường để đỡ toàn bộ trọng lượng của xe và tiếp nhận các phản lực của mặt đường tác dụng lên xe, giúp cho xe chuyển động được an toàn.
+
+Cấu tạo của bánh xe (Hình 23.2) bao gồm: vành (liền đĩa) (1), lốp (2), van khí (3) và có thể có săm.
+
+* **Chú thích cấu tạo bánh xe ô tô (Hình 23.2):**
+  1. Vành
+  2. Lốp
+  3. Van khí
+
+Trên ô tô con, vành được chế tạo (đúc) bằng hợp kim nhôm liền với đĩa thành một khối như trên Hình 23.3.a. Trên ô tô tải và ô tô chở khách, vành được chế tạo rời bằng thép và được hàn với đĩa thành một khối (Hình 23.3.b).
+
+Lốp được chế tạo từ cao su và có cấu tạo gồm nhiều lớp khá phức tạp (Hình 23.4). Các lớp sợi mành giúp tăng khả năng chịu lực của lốp. Tanh lốp giúp lốp xe lắp được vào lòng vành bánh xe. Lớp hoa lốp ở mặt ngoài giúp tăng khả năng bám của bánh xe với mặt đường.
+
+Trong không gian tạo bởi lốp và vành được bơm căng khí nén (qua van khí). Chính áp suất khí nén này tạo áp lực giữa lốp và vành để giữ nguyên vị trí của lốp đối với vành.
+
+* **Chú thích cấu tạo lốp xe ô tô (Hình 23.4):**
+  1. Lớp hoa lốp
+  2. Lớp lót bảo vệ
+  3. Các lớp sợi mành
+  4. Lớp lót trong
+  5. Lớp thành bên
+  6. Tanh lốp
+  7. Đệm tanh lốp
+
+> **Thông tin bổ sung:**
+> * Việc sáng chế ra bánh xe có ý nghĩa rất to lớn đối với sự phát triển của xã hội loài người. Bánh xe đã được chế tạo từ rất lâu (trước Công nguyên), tuy nhiên đến những năm giữa thế kỉ XIX, bánh xe mới được lắp lốp bơm hơi.
+> * Khi bánh xe lăn trên mặt đường sẽ xuất hiện lực cản lăn chống lại sự lăn của bánh xe. Lực cản lăn phụ thuộc chủ yếu vào chất lượng mặt đường và mức độ biến dạng của bánh xe. Trên ô tô con thông thường, khi áp suất lốp giảm 25% giá trị định mức (mức giảm áp suất khó được nhận ra khi quan sát sự biến dạng của lốp bằng mắt thường) làm tăng mức tiêu hao nhiên liệu của xe thêm khoảng 5% và làm giảm khoảng 25% tuổi thọ của lốp.
+
+## II - HỆ THỐNG TREO
+
+### 1. Nhiệm vụ
+
+Cùng với lốp bơm hơi, hệ thống treo có tác dụng giảm các lực va đập giữa bánh xe với phần mấp mô trên mặt đường truyền đến người và hàng hoá trên xe, giúp xe chuyển động được êm dịu và an toàn. Hệ thống treo được phân loại thành hệ thống treo độc lập (thường gặp trên ô tô con) và hệ thống treo phụ thuộc (thường gặp trên ô tô tải) (Hình 23.5).
+
+### 2. Cấu tạo
+
+Hệ thống treo của ô tô bao gồm ba bộ phận chính: bộ phận đàn hồi, bộ phận giảm chấn và bộ phận liên kết nối cụm bánh xe (hoặc cầu xe) với thân xe (Hình 23.6).
+
+* **Chú thích các bộ phận chính của hệ thống treo (Hình 23.6):**
+  1. Bộ phận đàn hồi
+  2. Bộ phận giảm chấn
+  3. Bộ phận liên kết
+
+Bộ phận đàn hồi (1) nối đàn hồi bánh xe với thân xe. Bộ phận đàn hồi thường gặp trên ô tô con là loại lò xo xoắn, trên ô tô tải là loại nhíp lá, trên ô tô khách là loại bóng khí nén (Hình 23.7a).
+
+Bộ phận giảm chấn (2) được thiết kế để tạo ra lực cản chống lại sự dịch chuyển của bánh xe, giúp dập tắt nhanh chóng dao động của bánh xe và thân xe.
+
+Bộ phận liên kết (3) gồm các thanh đòn và khớp nối giúp truyền các thành phần phản lực của mặt đường tác dụng vào bánh xe (theo phương dọc và phương ngang đối với thân xe) lên thân xe. Bộ phận đàn hồi loại nhíp lá trong hệ thống treo phụ thuộc thường đảm nhận luôn vai trò là bộ phận liên kết.
+
+### 3. Nguyên lí hoạt động
+
+Khi xe chuyển động qua mặt đường không bằng phẳng, nhờ có bộ phận đàn hồi liên kết giữa bánh xe và thân xe giúp giảm thiểu được lực va đập (xóc) truyền lên thân xe. Đồng thời khi đó bộ phận giảm chấn tạo ra lực cản và dập tắt nhanh chóng dao động đó, giúp xe chuyển động êm dịu và an toàn.
+
+> **Thông tin bổ sung:**
+> * Hệ số độ cứng của phần tử đàn hồi và hệ số độ cản của giảm chấn được tính toán thích hợp với từng loại xe ô tô cụ thể để đảm bảo êm dịu. Hiện nay, trên một số loại ô tô con sử dụng hệ thống treo bán tích cực, trong đó, bộ phận giảm chấn được điều khiển tự động để thay đổi hệ số độ cản cho phù hợp với các chế độ hoạt động của xe.
+> * Ngày nay, bộ phận đàn hồi là bóng khí nén được sử dụng ngày càng phổ biến cho ô tô khách. Hệ số độ cứng của bộ phận đàn hồi loại này có thể thay đổi được bằng cách tự động điều chỉnh áp suất khí nén trong bộ phận đàn hồi.
+
+## III - SỬ DỤNG VÀ BẢO DƯỠNG
+
+Hệ thống treo cần được kiểm tra, bảo dưỡng định kì. Kiểm tra các khớp nối các thanh liên kết với khung xe và với bánh xe, cầu xe để điều chỉnh hoặc thay bạc lót mới. Khi thấy giảm chấn bị chảy dầu, cần thay giảm chấn mới.
+
+Lốp xe có ảnh hưởng rất lớn đến tính năng an toàn của ô tô trong quá trình chuyển động. Do vậy, cần phải thường xuyên theo dõi áp suất và bơm đủ áp suất cho lốp xe. Khi lốp xe bị mòn nhiều, cần phải thay thế lốp mới đúng kích thước và các chỉ số khác tương đương lốp xe đang sử dụng.
+
+Để các lốp mòn đồng đều, lốp thường được đảo vị trí cho nhau sau mỗi hành trình khoảng 10 000 km. Cách đảo vị trí các lốp phổ biến nhất là lốp phía trước bên phải đổi cho lốp phía sau bên trái; lốp phía trước bên trái đổi cho lốp phía sau bên phải (Hình 23.8). Khi thấy lốp mòn lệch một bên, cần kiểm tra và điều chỉnh góc đặt bánh xe.
+
+# BÀI 24: HỆ THỐNG LÁI
+
+## I - CẤU TẠO VÀ NGUYÊN LÍ HOẠT ĐỘNG
+
+Cấu tạo chung của hệ thống lái gồm (Hình 24.2) bộ phận cơ cấu lái, bộ phận dẫn động lái và hệ thống trợ lực lái.
+
+* **Chú thích cấu tạo chung của hệ thống lái (Hình 24.2):**
+  * Dẫn động lái (trước cơ cấu lái)
+  * Cơ cấu lái
+  * Dẫn động lái (sau cơ cấu lái)
+  * Ống dẫn dầu trợ lực
+
+### 1. Cơ cấu lái
+
+#### a) Nhiệm vụ
+
+Cơ cấu lái là bộ phận tạo ra tỉ số truyền chính của hệ thống lái. Nhờ có cơ cấu lái, người lái có thể dễ dàng quay các bánh xe dẫn hướng đến các góc độ mong muốn khác nhau.
+
+#### b) Cấu tạo
+
+Có nhiều loại cơ cấu lái khác nhau, được sử dụng trên các loại ô tô khác nhau. Cơ cấu lái bánh răng – thanh răng (Hình 24.3) là loại cơ cấu lái đơn giản, sử dụng phổ biến trên ô tô con. Bộ phận chính (tạo ra tỉ số truyền) của cơ cấu lái loại này là cặp chi tiết ăn khớp gồm bánh răng (2) và thanh răng (3) lắp chung trong một vỏ hộp.
+
+#### c) Nguyên lí hoạt động
+
+Khi người lái quay vành lái, bánh răng quay và làm thanh răng dịch chuyển qua lại. Thông qua các thanh đòn (4) làm quay bánh xe dẫn hướng (5) sang bên phải hoặc sang bên trái.
+
+Các bánh xe dẫn hướng bên trái và bên phải được quay theo cùng chiều, tuỳ thuộc vào chiều quay vành lái.
+
+* **Chú thích sơ đồ cấu tạo hệ thống lái với cơ cấu lái bánh răng – thanh răng (Hình 24.3):**
+  1. Vành lái
+  2. Bánh răng
+  3. Thanh răng
+  4. Các thanh đòn
+  5. Bánh xe dẫn hướng
+
+> **Thông tin bổ sung:**
+> Trên một số ô tô tải có nhiều cầu, bốn bánh xe thuộc hai cầu trước là những bánh xe dẫn hướng, chúng luôn quay cùng chiều với nhau (với các góc không bằng nhau) và theo chiều quay của vành lái. Trên một số ô tô con tất cả bốn bánh xe đều là bánh dẫn hướng, trong đó hai bánh xe sau được điều khiển tự động để có thể quay cùng chiều hoặc ngược chiều với hai bánh xe trước tuỳ theo trạng thái chuyển động của ô tô.
+
+### 2. Dẫn động lái
+
+#### a) Nhiệm vụ
+
+Bộ phận dẫn động lái có nhiệm vụ truyền chuyển động quay của vành lái đến cơ cấu lái và từ cơ cấu lái đến các bánh xe dẫn hướng.
+
+#### b) Cấu tạo
+
+Phần bộ phận dẫn động phía trước cơ cấu lái bao gồm vành lái và các trục quay nối với nhau bằng khớp các đăng (Hình 24.4.a). Ở phía sau, cơ cấu lái nối đến các bánh xe thông qua các thanh đòn và các khớp cầu (Hình 24.4.b).
+
+#### c) Nguyên lí hoạt động
+
+Khi người lái xe quay vành lái, mô men quay được truyền qua các trục và khớp các đăng đến cơ cấu lái. Mô men đó được cơ cấu lái biến đổi (tăng lên) và được truyền qua các thanh đòn cùng khớp cầu đến các bánh xe dẫn hướng, làm quay các bánh xe dẫn hướng.
+
+> **Thông tin bổ sung:**
+> Các cơ cấu hấp thụ xung lực va chạm thường được thiết kế trong phần dẫn động lái từ vành lái đến cơ cấu lái nhằm bảo vệ người lái khỏi bị chấn thương nặng khi xảy ra va chạm phía trước của xe.
+
+### 3. Trợ lực lái
+
+#### a) Nhiệm vụ
+
+Hệ thống trợ lực lái có tác dụng giảm nhẹ lực cần tác dụng lên vành lái để điều khiển hướng chuyển động của xe.
+
+#### b) Cấu tạo
+
+Hệ thống trợ lực lái bằng điện (điều khiển bằng điện tử) đang được sử dụng ngày càng nhiều trên ô tô con. Tuy nhiên, phổ biến nhất hiện nay vẫn là hệ thống trợ lực lái bằng thuỷ lực với các bộ phận chính (Hình 24.5): bơm trợ lực (1), cụm van phân phối (3), các đường ống dẫn dầu (4), pít tông xi lanh trợ lực (5).
+
+#### c) Nguyên lí làm việc
+
+Khi xe chuyển động thẳng, dầu từ bơm trợ lực chảy theo ống dẫn dầu áp suất cao đến cụm van phân phối và quay trở về bơm.
+
+Khi người lái xe quay vành lái sang trái, cụm van phân phối thay đổi trạng thái đóng, mở của các van thuỷ lực, dầu áp suất cao từ bơm đi qua van đến khoang dầu bên trái pít tông trợ lực, tạo lực đẩy pít tông này cùng với thanh răng hướng sang bên phải (gọi là lực trợ lực). Lực trợ lực này cùng với lực tác dụng của người lái xe từ vành lái truyền qua bánh răng đến làm thanh răng dịch chuyển sang phải và làm quay các bánh xe dẫn hướng sang bên trái.
+
+* **Chú thích sơ đồ hệ thống trợ lực lái (Hình 24.5):**
+  1. Bơm dầu trợ lực
+  2. Ống dẫn dầu áp suất cao
+  3. Cụm van phân phối
+  4. Các ống dẫn dầu
+  5. Pít tông trợ lực
+  6. Bánh răng
+  7. Thanh răng
+
+## II - SỬ DỤNG VÀ BẢO DƯỠNG
+
+Hệ thống lái là hệ thống rất quan trọng đối với an toàn chuyển động của ô tô. Nếu hệ thống lái bị hỏng đột ngột trong khi ô tô đang chuyển động (người lái không còn tiếp tục điều khiển được hướng chuyển động của xe) thì sẽ rất nguy hiểm.
+
+Trong quá trình sử dụng, việc kiểm tra, bảo dưỡng theo định kì có ý nghĩa quan trọng đối với việc duy trì trạng thái làm việc an toàn và tin cậy của hệ thống lái. Việc tự theo dõi nhằm phát hiện tình trạng hoạt động bất thường của hệ thống lái không kém phần quan trọng. Cần đưa xe đến cơ sở dịch vụ kĩ thuật ô tô để kiểm tra, khắc phục khi thấy các hiện tượng bất thường như lực điều khiển vành lái nặng hơn bình thường, độ rơ lỏng của vành lái lớn hơn bình thường, xe không còn khả năng tự ổn định hướng chuyển động thẳng trên đường bằng phẳng, đèn cảnh báo tình trạng kĩ thuật bất thường của hệ thống lái (nếu có) bật sáng trên bảng thông tin tín hiệu của xe,...
+
+Các công việc kiểm tra, bảo dưỡng hệ thống lái theo định kì bao gồm kiểm tra và điều chỉnh độ rơ lỏng của vành lái, kiểm tra mức dầu trợ lực lái (bổ sung dầu trợ lực nếu cần) và hoạt động của hệ thống trợ lực lái, kiểm tra các khớp nối (và điều chỉnh nếu cần),...
+
+# BÀI 25: HỆ THỐNG PHANH VÀ AN TOÀN KHI THAM GIA GIAO THÔNG
+
+Trên ô tô có hệ thống phanh chính và hệ thống phanh đỗ. Hệ thống phanh chính của ô tô được sử dụng trong quá trình chuyển động, hệ thống phanh đỗ của ô tô được sử dụng để giữ xe đứng yên trong thời gian dài, nhất là khi người lái rời khỏi xe.
+
+Các loại hệ thống phanh chính phổ biến trên ô tô hiện nay bao gồm hệ thống phanh thuỷ lực (thường dùng trên ô tô con), hệ thống phanh khí nén và hệ thống phanh thuỷ lực – khí nén kết hợp (thường dùng trên ô tô tải lớn).
+
+## I - HỆ THỐNG PHANH THUỶ LỰC
+
+### 1. Cấu tạo
+
+Hệ thống phanh thuỷ lực gồm hai phần (Hình 25.2): các cơ cấu phanh (cơ cấu phanh trước (3), cơ cấu phanh sau (4)) và bộ phận dẫn động điều khiển phanh (gồm cụm xi lanh chính (1), các đường ống thuỷ lực (2)).
+
+Cơ cấu phanh có chức năng tạo ra mô men phanh bánh xe (braking torque). Có hai loại cơ cấu phanh thông dụng là cơ cấu phanh đĩa và cơ cấu phanh tang trống. Hầu hết cơ cấu phanh trên ô tô hiện nay đều tạo ra mô men phanh nhờ ma sát giữa hai nhóm chi tiết: một chi tiết quay cùng với bánh xe (đĩa phanh, trống phanh) và một nhóm chi tiết cố định (má phanh).
+
+Bộ phận dẫn động điều khiển phanh có chức năng tiếp nhận lực tác động của người lái xe và tạo ra lực tại cơ cấu phanh để tạo ra mô men phanh có giá trị tương ứng với mức độ tác động phanh của người lái.
+
+* **Chú thích hệ thống phanh trên ô tô con (Hình 25.2):**
+  1. Xi lanh chính
+  2. Đường ống thuỷ lực
+  3. Cơ cấu phanh trước (đĩa)
+  4. Cơ cấu phanh sau (tang trống)
+
+### 2. Nguyên lí hoạt động
+
+Hoạt động của hệ thống phanh thuỷ lực sử dụng cơ cấu phanh đĩa trên Hình 25.3 như sau: khi người lái tác dụng lực điều khiển lên bàn đạp phanh (1), lực đẩy tác dụng lên pít tông sơ cấp (3) làm nó dịch chuyển và đẩy dầu thuỷ lực trong khoang A theo đường ống thuỷ lực đến của hai cơ cấu phanh. Áp suất dầu tại khoang A tạo ra áp lực tác dụng lên pít tông thứ cấp (4) làm nó dịch chuyển sang bên trái và đẩy dầu trong khoang B đến các cơ cấu phanh còn lại. Áp suất dầu trong xi lanh công tác (6) tạo ra áp lực đẩy pít tông (7) và má phanh (8) ép chặt vào đĩa phanh (9). Ma sát giữa đĩa phanh và các má phanh tạo ra mô men phanh bánh xe.
+
+* **Chú thích sơ đồ nguyên lí hệ thống phanh thuỷ lực dùng cơ cấu phanh đĩa (Hình 25.3):**
+  1. Bàn đạp phanh
+  2. Xi lanh chính
+  3. Pít tông sơ cấp
+  4. Pít tông thứ cấp
+  5. Các đường ống thuỷ lực
+  6. Xi lanh công tác
+  7. Pít tông xi lanh công tác
+  8. Má phanh
+  9. Đĩa phanh
+
+Xi lanh chính được thiết kế có hai pít tông (3 và 4) để tạo ra hai khoang dầu (A và B), mỗi khoang nối đến các cơ cấu phanh trên một số bánh xe nhất định (gọi là dòng dẫn động phanh), giúp tăng độ tin cậy và tính năng an toàn.
+
+Ma sát giữa má phanh và đĩa phanh, làm nóng và mòn má phanh. Khe hở giữa má phanh và đĩa phanh do đó sẽ tăng dần theo thời gian sử dụng và gây ảnh hưởng đến hiệu quả phanh. Cơ cấu phanh trong hệ thống phanh thuỷ lực ngày nay được thiết kế để có thể tự động điều chỉnh khe hở đó.
+
+> **Thông tin bổ sung:**
+> * Lực phanh là thành phần lực cản chuyển động xuất hiện tại vùng tiếp xúc giữa bánh xe với mặt đường khi có mặt mô men phanh trên bánh xe. Giá trị lực phanh phụ thuộc vào mô men phanh trên bánh xe và bị giới hạn bởi khả năng bám của bánh xe với mặt đường.
+> * Hệ thống chống trượt lết bánh xe khi phanh (ABS) đã được trang bị trên phần lớn ô tô con hiện nay. Tuy nhiên, cần lưu ý là ABS không đảm bảo chắc chắn xe sẽ không mất an toàn giao thông trên đường trơn trượt.
+
+## II - HỆ THỐNG PHANH KHÍ NÉN
+
+### 1. Cấu tạo
+
+Hệ thống phanh khí nén cũng bao gồm các cơ cấu phanh và hệ thống dẫn động điều khiển.
+
+Sơ đồ cấu tạo hệ thống phanh khí nén như trên Hình 25.4. Các cơ cấu phanh (6) được đặt tại các bánh xe, bao gồm các bộ phận chính:
+
+* Trống phanh (11) lắp cố định với moay-ơ bánh xe, luôn quay cùng với bánh xe.
+* Hai guốc phanh (9) quay được quanh các chốt (12). Các chốt được lắp cố định trên mâm phanh (gắn với dầm cầu xe).
+* Cam ép (8) quay được quanh trục của nó dưới tác dụng của lực đẩy của khí nén từ bầu phanh (7).
+
+Hệ thống dẫn động phanh bao gồm máy nén khí (1), các đường ống dẫn khí nén (2), các bình chứa khí nén (3), van phân phối (4) và bàn đạp phanh (5).
+
+* **Chú thích sơ đồ nguyên lí hệ thống phanh khí nén (Hình 25.4):**
+  1. Máy nén khí
+  2. Các đường ống dẫn khí nén
+  3. Các bình chứa khí nén
+  4. Van phân phối
+  5. Bàn đạp phanh
+  6. Các cơ cấu phanh
+  7. Bầu phanh
+  8. Cam ép
+  9. Guốc phanh
+  10. Má phanh
+  11. Trống phanh
+  12. Chốt quay
+
+### 2. Nguyên lí hoạt động
+
+Máy nén khí đẩy khí nén qua đường ống dẫn đến các bình chứa. Khi người lái xe đạp bàn đạp phanh, các van khí trong van phân phối mở ra, khí nén từ các bình chứa đi đến các cơ cấu phanh. Khí nén trong bầu phanh tạo áp lực làm quay cam ép, hai guốc phanh quay quanh các chốt (12) và ép chặt vào trống phanh (11). Lực ma sát giữa các má phanh và trống phanh tạo ra mô men phanh.
+
+Khác với cơ cấu phanh trong hệ thống phanh thuỷ lực, cơ cấu phanh trong hệ thống phanh khí nén không tự động điều chỉnh khe hở giữa má phanh và trống phanh. Khe hở này cần được kiểm tra và điều chỉnh trong khi bảo dưỡng theo định kì.
+
+> **Thông tin bổ sung:**
+> Hệ thống phanh đỗ cũng bao gồm cơ cấu phanh và bộ phận dẫn động điều khiển. Cơ cấu phanh đỗ có thể được thiết kế tại một số bánh xe hoặc ngay trên hệ thống truyền lực và thường được dẫn động điều khiển bằng cần kéo (hoặc bàn đạp) thông qua dây cáp.
+
+## III - SỬ DỤNG VÀ BẢO DƯỠNG HỆ THỐNG PHANH
+
+Hệ thống phanh cần phải được sử dụng đúng cách và được kiểm tra, bảo dưỡng đầy đủ theo định kì để nó luôn hoạt động hiệu quả và tin cậy, góp phần đảm bảo an toàn giao thông.
+
+**Bảng đèn cảnh báo tình trạng bất thường trên bảng thông tin tín hiệu (Hình 25.5):**
+
+| Hình dáng đèn báo (Kí hiệu) | Nơi xuất hiện tình trạng bất thường |
+| :--- | :--- |
+| `(!)` / `BRAKE` | Hệ thống phanh chính |
+| `(P)` / `PARK` | Hệ thống phanh đỗ |
+| `(ABS)` / `ABS` / `HOLD` | Hệ thống điều khiển tự động |
+
+Trước khi khởi động động cơ, cần kiểm tra các tín hiệu cảnh báo tình trạng bất thường (nếu có) của hệ thống phanh trên bảng thông tin tín hiệu của xe (Hình 25.5) và vận hành thử hệ thống phanh. Nếu thấy bất thường, hệ thống phanh cần được kiểm tra, khắc phục trước khi khởi hành.
+
+Trong khi đang lái xe nếu thấy đèn cảnh báo trạng thái bất thường của hệ thống phanh chính bật sáng, cần đạp phanh để kiểm tra lực bàn đạp và hiệu lực phanh. Nếu lực bàn đạp nhẹ bất thường hoặc hiệu lực phanh kém cần dừng xe và sửa chữa ngay. Trường hợp lực bàn đạp và hiệu lực phanh vẫn bình thường hãy đưa xe đến cơ sở dịch vụ kĩ thuật ô tô để được kiểm tra khắc phục ngay khi có thể.
+
+Định kì hằng tháng hoặc trước các chuyến đi xa, cần kiểm tra lượng dầu trong bình chứa dầu phanh để đảm bảo dầu phanh còn đủ theo yêu cầu, kiểm tra tình trạng hoạt động của các đèn báo phanh,...
+
+## IV - AN TOÀN KHI THAM GIA GIAO THÔNG
+
+Trong quá trình ô tô hoạt động, có rất nhiều yếu tố khách quan (như đường vòng quanh co, trơn trượt, không bằng phẳng; thời tiết xấu gây hạn chế tầm nhìn xa; mật độ phương tiện giao thông,...) và chủ quan (vận hành, sử dụng không đúng cách; không kiểm tra, bảo dưỡng xe đúng khuyến cáo,...) tiềm ẩn nguy cơ gây mất an toàn.
+
+Người sử dụng, vận hành ô tô cần phải thực hiện đúng quy định của pháp luật về an toàn giao thông đường bộ:
+
+* Không được lái xe khi hơi thở có nồng độ cồn.
+* Phải thắt dây an toàn khi ngồi trên ô tô.
+* Phương tiện tham gia giao thông phải đi bên phải theo chiều đi của mình, đi đúng làn đường, phần đường quy định và phải chấp hành hệ thống báo hiệu đường bộ (hướng dẫn của người điều khiển giao thông, tín hiệu đèn giao thông, các biển báo hiệu, vạch kẻ đường,...).
+* Phương tiện tham gia giao thông đường bộ di chuyển với tốc độ thấp hơn phải đi về bên phải. Trên đường có nhiều làn đường cho xe đi cùng chiều, phải cho xe đi trong một làn đường và chỉ được chuyển làn đường ở những nơi cho phép; khi chuyển làn đường phải có tín hiệu báo trước và phải bảo đảm an toàn.
+* Người điều khiển xe phải tuân thủ quy định về tốc độ xe chạy trên đường và phải giữ một khoảng cách an toàn đối với xe chạy liền trước xe của mình.
+* Người điều khiển xe phải báo hiệu xin vượt xe đi phía trước và chỉ được vượt khi đảm bảo điều kiện an toàn.
+* Chỉ dừng, đỗ xe nơi quy định hoặc nơi có lề đường rộng; chỉ được rời khỏi xe sau khi đã thực hiện các biện pháp an toàn,...
+
+> **Thông tin bổ sung:**
+> Trên nhiều ô tô hiện đại có lắp thêm các hệ thống có vai trò chủ động duy trì trạng thái chuyển động an toàn của xe (như ABS, ESC,...) và các hệ thống có vai trò hạn chế thiệt hại về sức khoẻ cho người sử dụng xe trong tình huống xảy ra tai nạn (như đai an toàn, túi khí,...). Túi khí kết hợp với việc thắt đai an toàn đúng cách giúp tăng thêm khả năng bảo vệ cho người ngồi trên xe khi xảy ra tai nạn.
+
+Ngoài ra, việc thực hiện các khuyến cáo của nhà sản xuất ô tô cũng cần thiết để góp phần đảm bảo an toàn giao thông.
+
+**Các khuyến cáo đối với người ở trên xe:** điều chỉnh ghế đúng (ghế lùi xa nơi lắp túi khí, lưng ghế thẳng); ngồi đúng tư thế (ngồi thẳng ở giữa ghế); quan sát các phương tiện tham gia giao thông khác ở phía trước và phía sau xe trước khi mở cửa xe, không mở cửa xe hoặc bước xuống xe khi chưa bảo đảm điều kiện an toàn,...
+
+**Các khuyến cáo đối với người lái xe:**
+
+* Thường xuyên theo dõi và kiểm tra tình trạng kĩ thuật của xe, đảm bảo xe được bảo dưỡng đúng định kì.
+* Tìm hiểu kĩ hướng dẫn sử dụng xe của nhà sản xuất.
+* Trước khi lên xe, cần chú ý quan sát tình trạng áp suất lốp của tất cả các bánh xe và bơm đủ áp suất lốp.
+* Điều chỉnh vị trí ghế và các gương hỗ trợ quan sát cho phù hợp nhất, thắt đai an toàn trước khi khởi động động cơ.
+* Khi lái xe trên các đoạn đường trơn như đường ướt, có băng tuyết, bùn hay cát,... hoặc trong thời tiết mưa mù hạn chế tầm nhìn cần phải cho xe đi chậm hơn và tránh phanh gấp hoặc quay vành lái đột ngột.
+* Không quay vành lái đột ngột ở tốc độ cao, giảm tốc độ khi đi vào đường vòng, quanh co.
+* Không tắt động cơ khi xe đang chạy. Sử dụng số truyền thấp thích hợp khi xe chuyển động xuống đèo dốc dài để hạn chế tốc độ của xe, tránh sử dụng hệ thống phanh chính liên tục.
+* Trước khi rời khỏi ghế, người lái xe phải kéo (hoặc đạp) cần phanh đỗ hết mức và tắt động cơ.
 
