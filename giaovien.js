@@ -26,11 +26,12 @@
   function showScreen(n) { SCREENS.forEach(s => $(s === 'app' ? 'app' : 'scr-' + s).classList.toggle('hidden', s !== n)); }
   function setView(v) {
     S.view = v;
-    ['create', 'library', 'room', 'books', 'settings', 'admin'].forEach(x => $('view-' + x).classList.toggle('hidden', x !== v));
+    ['create', 'exam', 'library', 'room', 'books', 'settings', 'admin'].forEach(x => $('view-' + x).classList.toggle('hidden', x !== v));
     document.querySelectorAll('#main-nav .navtab').forEach(b => b.classList.toggle('on', b.dataset.view === v));
     if (v === 'books') renderBooks();
     if (v === 'admin') loadAdmin();
     if (v === 'room') renderRoomNone();
+    if (v === 'exam' && window.QMExam) window.QMExam.onShow();
   }
   document.querySelectorAll('#main-nav .navtab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
   $('btn-sound').onclick = () => { QM.sound.isMuted = !QM.sound.isMuted; $('sound-icon').textContent = QM.sound.isMuted ? '🔇' : '🔊'; };
@@ -338,18 +339,25 @@
     return lines.join('\n');
   }
 
-  async function callGemini(prompt) {
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  // opts.parts: các phần đính kèm (vd file PDF dạng inline_data) | opts.retry: tự chờ và thử lại khi bị giới hạn lượt gọi
+  async function callGemini(prompt, opts) {
+    opts = opts || {};
     const tried = [], names = [S.geminiModel || CFG.defaultGeminiModel, ...(CFG.geminiFallbackModels || [])].filter((m, i, a) => m && a.indexOf(m) === i);
     let lastErr = null;
     for (const m of names) {
       tried.push(m);
-      let res;
-      try {
-        res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': S.geminiKey },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } })
-        });
-      } catch (e) { throw new Error('Không kết nối được Google AI (kiểm tra mạng).'); }
+      let res, attempt = 0;
+      for (;;) {
+        try {
+          res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': S.geminiKey },
+            body: JSON.stringify({ contents: [{ parts: [...(opts.parts || []), { text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } })
+          });
+        } catch (e) { throw new Error('Không kết nối được Google AI (kiểm tra mạng).'); }
+        if (res.status === 429 && opts.retry && attempt < 3) { attempt++; if (opts.onWait) opts.onWait(attempt * 20); await sleep(attempt * 20000); continue; }
+        break;
+      }
       if (res.ok) {
         const data = await res.json();
         const txt = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts || []).map(p => p.text || '').join('');
@@ -974,6 +982,8 @@
   }
   $('ad-rooms-refresh').onclick = loadRooms;
   $('ad-rooms').addEventListener('click', async e => { const b = e.target.closest('[data-room]'); if (!b) return; if (confirm('Xóa phòng ' + b.dataset.room + '?')) { await db().ref('rooms/' + b.dataset.room).remove(); loadRooms(); } });
+
+  window.QMApp = { S, callGemini, parseJsonLoose, allBooks, getParsed, setView, setQuiz: q => { setQuiz(q); }, setTopic: t => { $('ai-topic').value = t; topicEdited = true; }, isReady: () => !!S.user };
 
   /* ======================= KHỞI ĐỘNG ======================= */
   (function init() {

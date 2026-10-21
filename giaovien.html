@@ -44,6 +44,7 @@
       </div>
       <nav id="main-nav" class="hidden items-center gap-1 overflow-x-auto">
         <button class="navtab" data-view="create">✨ Tạo đề</button>
+        <button class="navtab" data-view="exam">📝 Đề theo ma trận</button>
         <button class="navtab" data-view="library">📚 Đề của tôi</button>
         <button class="navtab" data-view="room">🏆 Phòng thi</button>
         <button class="navtab" data-view="books">📖 Tài liệu SGK</button>
@@ -200,6 +201,88 @@
             <button id="btn-save-quiz" class="btn btn-g py-3">💾 Lưu vào “Đề của tôi”</button>
             <button id="btn-open-room" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-xl">🚀 Mở phòng thi với bộ đề này</button>
           </div>
+        </div>
+      </section>
+
+      <!-- ========== ĐỀ KIỂM TRA THEO MA TRẬN ========== -->
+      <section id="view-exam" class="hidden space-y-5">
+        <div class="flex flex-wrap items-start justify-between gap-2">
+          <div><h2 class="text-xl font-black">📝 Tạo đề kiểm tra theo Ma trận - Đặc tả</h2>
+            <p class="text-xs text-slate-400 max-w-3xl">Tải file ma trận, AI soạn nhiều mã đề cùng mức độ nhưng khác nội dung, theo cấu trúc GDPT 2018: <b>Phần I</b> trắc nghiệm nhiều lựa chọn, <b>Phần II</b> trắc nghiệm đúng sai. Có đáp án và hướng dẫn chấm chi tiết, tải về file Word.</p></div>
+        </div>
+        <div id="ex-key-warn" class="hidden p-3 rounded-xl bg-amber-950/40 border border-amber-700/40 text-xs text-amber-200">Chức năng này cần Gemini API key. Thầy/cô vào tab <b>Cài đặt</b> để nhập key.</div>
+        <div id="ex-restore" class="hidden p-3 rounded-xl bg-indigo-950/40 border border-indigo-700/40 text-xs text-indigo-200 flex flex-wrap items-center justify-between gap-2">
+          <span>Có bộ đề tạo gần nhất: <b id="ex-restore-info"></b></span><button id="ex-restore-btn" class="btn btn-g">Khôi phục để tải về</button></div>
+
+        <div class="card p-5 space-y-3">
+          <h3 class="font-bold flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm">1</span>Tải file Ma trận, Bản đặc tả</h3>
+          <div class="grid md:grid-cols-2 gap-3 items-end">
+            <div><label class="lbl">File ma trận (.docx hoặc .pdf, tối đa 15 MB)</label>
+              <input type="file" id="ex-file" accept=".docx,.doc,.pdf" class="inp !p-2 file:mr-3 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:px-3 file:py-1.5 file:font-bold">
+              <div id="ex-filename" class="text-[11px] text-slate-400 mt-1"></div></div>
+            <div><label class="lbl">Sách tham chiếu (tùy chọn)</label><select id="ex-ref" class="inp"></select></div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="ex-btn-analyze" class="btn btn-p py-2.5 disabled:opacity-60">🔍 Phân tích ma trận bằng AI</button>
+            <button id="ex-btn-manual" class="btn btn-g py-2.5">✍️ Nhập ma trận thủ công</button>
+            <span id="ex-analyze-status" class="text-xs text-emerald-300"></span>
+          </div>
+          <p class="text-[11px] text-slate-500">File .doc đời cũ: mở bằng Word, chọn Lưu thành (Save As) → .docx hoặc PDF rồi tải lên.</p>
+        </div>
+
+        <div class="card p-5 space-y-4" id="ex-step2">
+          <h3 class="font-bold flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center text-sm">2</span>Kiểm tra và chỉnh ma trận</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="col-span-2"><label class="lbl">Tên trường</label><input id="ex-truong" class="inp" placeholder="TRƯỜNG THPT ..."></div>
+            <div class="col-span-2"><label class="lbl">Tổ chuyên môn (nếu có)</label><input id="ex-to" class="inp" placeholder="Tổ ..."></div>
+            <div class="col-span-2"><label class="lbl">Tên kì kiểm tra</label><input id="ex-kythi" class="inp" placeholder="KIỂM TRA GIỮA HỌC KÌ I"></div>
+            <div><label class="lbl">Năm học</label><input id="ex-namhoc" class="inp"></div>
+            <div><label class="lbl">Thời gian (phút)</label><input id="ex-time" type="number" min="5" class="inp" value="45"></div>
+            <div class="col-span-1 md:col-span-2"><label class="lbl">Môn</label><input id="ex-mon" class="inp" placeholder="Công nghệ"></div>
+            <div><label class="lbl">Lớp</label><input id="ex-lop" class="inp" placeholder="12"></div>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-xs">
+              <thead class="bg-slate-900"><tr><th class="w-8">#</th><th>Chủ đề / Nội dung kiểm tra</th><th>Yêu cầu cần đạt</th>
+                <th class="text-center" colspan="3">Phần I (số câu)</th><th class="text-center" colspan="3">Phần II (số ý)</th><th></th></tr>
+                <tr class="bg-slate-900/60"><th></th><th></th><th></th><th class="text-center">Biết</th><th class="text-center">Hiểu</th><th class="text-center">VD</th><th class="text-center">Biết</th><th class="text-center">Hiểu</th><th class="text-center">VD</th><th></th></tr></thead>
+              <tbody id="ex-rows"></tbody></table>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2"><button id="ex-add-row" class="btn btn-g">➕ Thêm dòng</button><div id="ex-totals" class="text-xs text-slate-300"></div></div>
+          <div class="grid sm:grid-cols-3 gap-3 items-end">
+            <div><label class="lbl">Tổng điểm Phần I</label><input id="ex-d1" type="number" step="0.05" min="0" class="inp"></div>
+            <div><label class="lbl">Tổng điểm Phần II</label><input id="ex-d2" type="number" step="0.05" min="0" class="inp"></div>
+            <div id="ex-score-info" class="text-[11px] text-slate-400"></div>
+          </div>
+          <p class="text-[11px] text-slate-500">Phần II: mỗi câu có 4 ý a-b-c-d, nên số ý nên chia hết cho 4. Cách chấm Phần II: đúng 1 ý = 10%, 2 ý = 25%, 3 ý = 50%, 4 ý = 100% điểm của câu.</p>
+        </div>
+
+        <div class="card p-5 space-y-4">
+          <h3 class="font-bold flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-sm">3</span>Cấu hình bộ đề</h3>
+          <div class="grid md:grid-cols-3 gap-3">
+            <div><label class="lbl">Số lượng đề (tối đa 8)</label><input id="ex-count" type="number" min="1" max="8" value="4" class="inp"></div>
+            <div class="md:col-span-2"><label class="lbl">Mã đề (cách nhau bởi dấu phẩy)</label><input id="ex-codes" class="inp font-mono"></div>
+          </div>
+          <div class="space-y-1.5 text-sm">
+            <label class="flex items-start gap-2 cursor-pointer"><input type="radio" name="ex-mode" value="diff" checked class="mt-1 accent-purple-500"><span><b>Mỗi mã đề một nội dung khác nhau</b> (AI soạn riêng từng đề, cùng ma trận và độ khó). Tốn nhiều lượt gọi AI hơn.</span></label>
+            <label class="flex items-start gap-2 cursor-pointer"><input type="radio" name="ex-mode" value="permute" class="mt-1 accent-purple-500"><span><b>Cùng nội dung, đảo thứ tự câu và phương án</b> (soạn 1 đề rồi hoán vị thành các mã đề). Nhanh, ít tốn lượt AI.</span></label>
+          </div>
+          <div><label class="lbl">Yêu cầu bổ sung cho AI (tùy chọn)</label><textarea id="ex-note" rows="2" class="inp" placeholder="Ví dụ: ưu tiên tình huống thực tiễn ở địa phương; tránh câu hỏi tính toán phức tạp..."></textarea></div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="ex-btn-gen" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 text-white font-bold text-sm shadow-lg disabled:opacity-60">✨ Tạo bộ đề</button>
+            <button id="ex-btn-cancel" class="hidden btn btn-r">Dừng</button>
+          </div>
+          <div id="ex-progress" class="hidden space-y-1"><div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div id="ex-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-full transition-all" style="width:0%"></div></div><div id="ex-prog-text" class="text-xs text-slate-300"></div></div>
+        </div>
+
+        <div class="card p-5 space-y-4 hidden" id="ex-result-card">
+          <div id="ex-step4" class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="font-bold flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">4</span>Kết quả: tải đề và đáp án</h3>
+            <button id="ex-btn-zip" class="btn btn-ok">📦 Tải tất cả (ZIP)</button>
+          </div>
+          <p class="text-[11px] text-slate-400">Thầy/cô nên đọc rà soát nội dung trước khi in. File Word có thể chỉnh sửa tự do.</p>
+          <div id="ex-results" class="space-y-3"></div>
+          <div><h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Đối chiếu đề với ma trận</h4><div class="overflow-x-auto" id="ex-compare"></div></div>
         </div>
       </section>
 
@@ -385,6 +468,10 @@
   <script src="config.js"></script>
   <script src="common.js"></script>
   <script src="sgk.js"></script>
+  <script src="vendor/docx.iife.js"></script>
+  <script src="vendor/mammoth.browser.min.js"></script>
+  <script src="vendor/jszip.min.js"></script>
   <script src="giaovien.js"></script>
+  <script src="exam.js"></script>
 </body>
 </html>
