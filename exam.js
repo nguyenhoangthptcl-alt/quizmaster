@@ -136,7 +136,7 @@ ${text ? '\n===== NỘI DUNG FILE =====\n' + text.slice(0, 120000) + '\n===== H�
         if (text.trim().length < 30) throw new Error('Không đọc được nội dung từ file Word này.');
       }
       $('ex-analyze-status').textContent = 'AI đang đọc ma trận và đặc tả...';
-      const raw = await a.callGemini(analyzePrompt(text), { parts, retry: true, onWait: s => { $('ex-analyze-status').textContent = `Đang chờ ${s} giây do giới hạn lượt gọi...`; } });
+      const raw = await a.callGemini(analyzePrompt(text), { parts, retry: true, onWait: s => { $('ex-analyze-status').textContent = `Máy chủ AI đang bận, tự thử lại sau ${s} giây...`; } });
       applyAnalysis(a.parseJsonLoose(raw));
     } catch (e) { QM.toast(e.message, 'error'); $('ex-analyze-status').textContent = ''; }
     finally { setBusy(false); }
@@ -263,7 +263,7 @@ CHỈ trả về JSON hợp lệ:
     let todo = slots.slice();
     for (let attempt = 0; attempt < 3 && todo.length && !E.cancel; attempt++) {
       const prompt = (kind === 1 ? p1Prompt : p2Prompt)(bp, todo, ctx);
-      const raw = a.parseJsonLoose(await a.callGemini(prompt, { retry: true, onWait: s => setProg(null, `Đang chờ ${s} giây do giới hạn lượt gọi của API key...`) }));
+      const raw = a.parseJsonLoose(await a.callGemini(prompt, { retry: true, onWait: s => setProg(null, `Máy chủ AI đang bận, tự thử lại sau ${s} giây (tiến trình vẫn được giữ)...`) }));
       const list = Array.isArray(raw) ? raw : (raw.cau || raw.questions || []);
       list.forEach((r, idx) => {
         let s = todo.find(x => x.n === parseInt(r && r.so, 10)) || todo[idx];

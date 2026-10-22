@@ -340,22 +340,36 @@
   }
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  // opts.parts: các phần đính kèm (vd file PDF dạng inline_data) | opts.retry: tự chờ và thử lại khi bị giới hạn lượt gọi
+  const TRANSIENT = [429, 500, 502, 503, 504];
+  // Gọi Gemini. Tự thử lại khi máy chủ quá tải/giới hạn lượt gọi, rồi tự chuyển sang mô hình dự phòng.
+  // opts.parts: phần đính kèm (vd PDF inline_data) | opts.onWait(giây, mã lỗi): báo tiến trình chờ
   async function callGemini(prompt, opts) {
     opts = opts || {};
-    const tried = [], names = [S.geminiModel || CFG.defaultGeminiModel, ...(CFG.geminiFallbackModels || [])].filter((m, i, a) => m && a.indexOf(m) === i);
-    let lastErr = null;
+    const EXTRA = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+    const tried = [], names = [S.geminiModel || CFG.defaultGeminiModel, ...(CFG.geminiFallbackModels || []), ...EXTRA].filter((m, i, a) => m && a.indexOf(m) === i);
+    const notify = (secs, status) => {
+      if (opts.onWait) opts.onWait(secs, status);
+      else QM.toast(status === 429 ? `Đã chạm giới hạn lượt gọi, tự thử lại sau ${secs} giây...` : `Máy chủ AI đang bận, tự thử lại sau ${secs} giây...`, 'info');
+    };
+    let lastErr = null, busy = false;
     for (const m of names) {
       tried.push(m);
-      let res, attempt = 0;
+      let res = null, attempt = 0;
       for (;;) {
         try {
           res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
             method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': S.geminiKey },
             body: JSON.stringify({ contents: [{ parts: [...(opts.parts || []), { text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } })
           });
-        } catch (e) { throw new Error('Không kết nối được Google AI (kiểm tra mạng).'); }
-        if (res.status === 429 && opts.retry && attempt < 3) { attempt++; if (opts.onWait) opts.onWait(attempt * 20); await sleep(attempt * 20000); continue; }
+        } catch (e) {
+          if (attempt < 1) { attempt++; await sleep(3000); continue; }
+          throw new Error('Không kết nối được Google AI (kiểm tra mạng).');
+        }
+        const maxTry = res.status === 429 ? 2 : 3;
+        if (TRANSIENT.includes(res.status) && attempt < maxTry) {
+          attempt++; const secs = res.status === 429 ? attempt * 20 : attempt * 6;
+          notify(secs, res.status); await sleep(secs * 1000); continue;
+        }
         break;
       }
       if (res.ok) {
@@ -367,12 +381,13 @@
       let body = {}; try { body = await res.json(); } catch (e) { }
       const msg = (body.error && body.error.message) || ('HTTP ' + res.status);
       lastErr = new Error(msg);
-      if (res.status === 404 || (res.status === 400 && /not found|not supported|unknown model/i.test(msg))) continue;   // thử tên mô hình khác
+      if (TRANSIENT.includes(res.status)) { busy = true; continue; }                 // quá tải: thử mô hình khác
+      if (res.status === 404 || (res.status === 400 && /not found|not supported|unknown model/i.test(msg))) continue;   // tên mô hình không còn
       if (res.status === 400 && /API key/i.test(msg)) throw new Error('API key không hợp lệ.');
       if (res.status === 403 || res.status === 401) throw new Error('API key bị từ chối: ' + msg);
-      if (res.status === 429) throw new Error('Đã vượt hạn mức miễn phí của API key, vui lòng đợi ít phút rồi thử lại.');
       throw lastErr;
     }
+    if (busy) throw new Error('Máy chủ Google AI đang quá tải hoặc đã hết lượt gọi tạm thời (đã thử ' + tried.length + ' mô hình: ' + tried.join(', ') + '). Thầy đợi 1-2 phút rồi bấm lại. Nếu vẫn lỗi, thử vào Cài đặt nhập tên mô hình khác (ví dụ gemini-2.5-flash-lite).');
     throw new Error((lastErr ? lastErr.message : 'Lỗi AI') + ' (đã thử: ' + tried.join(', ') + '). Thầy vào Cài đặt nhập tên mô hình còn hoạt động.');
   }
 
