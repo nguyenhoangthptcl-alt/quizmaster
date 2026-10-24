@@ -5,11 +5,11 @@
 window.QM_CONFIG = {
   // Dán thông số Firebase của thầy vào đây (Project settings -> Your apps -> Web app)
   firebase: {
-    apiKey: "",
-    authDomain: "",
-    databaseURL: "",
-    projectId: "",
-    appId: ""
+    apiKey: "AIzaSyCsPAV6HoWKDaiu4eSbKfVBCnbsk9357vc",
+    authDomain: "dautruongcn.firebaseapp.com",
+    databaseURL: "https://dautruongcn-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "dautruongcn",
+    appId: "1:660069296942:web:68c8aa036c60a13da0e8bf"
   },
 
   // Tên đăng nhập được chuyển thành email ảo dạng  ten@quizmaster.local  (không gửi thư thật)
