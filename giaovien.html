@@ -45,6 +45,7 @@
       <nav id="main-nav" class="hidden items-center gap-1 overflow-x-auto">
         <button class="navtab" data-view="create">✨ Tạo đề</button>
         <button class="navtab" data-view="exam">📝 Đề theo ma trận</button>
+        <button class="navtab" data-view="assign">🏠 Giao bài (luyện tập / kiểm tra)</button>
         <button class="navtab" data-view="library">📚 Đề của tôi</button>
         <button class="navtab" data-view="room">🏆 Phòng thi</button>
         <button class="navtab" data-view="books">📖 Tài liệu SGK</button>
@@ -158,12 +159,15 @@
 
           <div><label class="lbl">Tên bài kiểm tra</label><input id="ai-topic" class="inp" placeholder="Tự điền theo phạm vi, có thể sửa"></div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="lbl">Số câu</label>
-              <select id="ai-count" class="inp"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></div>
+          <div class="grid grid-cols-3 gap-3">
+            <div><label class="lbl">Nhiều lựa chọn</label>
+              <select id="ai-count" class="inp"><option>0</option><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></div>
+            <div><label class="lbl">Đúng/sai (4 ý)</label>
+              <select id="ai-count-tf" class="inp"><option selected>0</option><option>2</option><option>4</option><option>6</option><option>8</option><option>10</option></select></div>
             <div><label class="lbl">Mức độ</label>
               <select id="ai-diff" class="inp"><option value="Hỗn hợp (Nhận biết đến Vận dụng)">Hỗn hợp</option><option value="Nhận biết - Thông hiểu">Cơ bản</option><option value="Vận dụng - Nâng cao">Nâng cao</option></select></div>
           </div>
+          <p class="text-[11px] text-slate-500 -mt-2">Câu đúng/sai dùng cho tab “Giao bài” (luyện tập, kiểm tra ở nhà). Phòng thi trực tiếp chỉ dùng câu nhiều lựa chọn.</p>
 
           <details id="scope-details" class="group">
             <summary class="cursor-pointer text-xs font-bold text-slate-300 select-none">📄 Nội dung AI được phép dùng (xem / bổ sung / sửa) <span id="scope-chars" class="text-slate-500 font-normal"></span></summary>
@@ -177,7 +181,8 @@
             </button>
             <div class="flex gap-2">
               <button id="btn-sample" class="btn btn-g flex-1">⚡ Lấy câu mẫu (không cần AI)</button>
-              <button id="btn-add-q" class="btn btn-g flex-1">➕ Thêm câu thủ công</button>
+              <button id="btn-add-q" class="btn btn-g flex-1">➕ Câu nhiều lựa chọn</button>
+              <button id="btn-add-tf" class="btn btn-g flex-1">➕ Câu đúng/sai</button>
             </div>
           </div>
         </div>
@@ -283,6 +288,64 @@
           <p class="text-[11px] text-slate-400">Thầy/cô nên đọc rà soát nội dung trước khi in. File Word có thể chỉnh sửa tự do.</p>
           <div id="ex-results" class="space-y-3"></div>
           <div><h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Đối chiếu đề với ma trận</h4><div class="overflow-x-auto" id="ex-compare"></div></div>
+        </div>
+      </section>
+
+      <!-- ========== GIAO BÀI LUYỆN TẬP / KIỂM TRA Ở NHÀ ========== -->
+      <section id="view-assign" class="hidden space-y-5">
+        <div><h2 class="text-xl font-black">🏠 Giao bài: luyện tập và kiểm tra ở nhà</h2>
+          <p class="text-xs text-slate-400 max-w-3xl">Giao bộ đề cho học sinh làm ở nhà qua một đường link. <b>Tự luyện</b>: học sinh làm không giới hạn thời gian, xem đáp án ngay. <b>Kiểm tra lấy điểm</b>: giới hạn thời gian và số lần làm, thầy/cô xem bảng điểm. Hỗ trợ câu trắc nghiệm nhiều lựa chọn và câu đúng/sai.</p></div>
+
+        <div class="card p-5 space-y-4">
+          <h3 class="font-bold">1. Tạo bài giao mới</h3>
+          <div class="grid md:grid-cols-2 gap-3">
+            <div><label class="lbl">Lấy câu hỏi từ</label><select id="as-src" class="inp"></select><div id="as-src-info" class="text-[11px] text-slate-400 mt-1"></div></div>
+            <div><label class="lbl">Tên bài giao</label><input id="as-title" class="inp" placeholder="vd: Ôn tập Bài 3 - Mạch điện 3 pha"></div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-3 text-sm">
+            <label class="flex items-start gap-2 p-3 rounded-xl border border-slate-700 cursor-pointer"><input type="radio" name="as-mode" value="practice" checked class="mt-1 accent-purple-500"><span><b>Tự luyện</b><br><span class="text-xs text-slate-400">Không giới hạn thời gian và số lần; xem đáp án, giải thích ngay sau mỗi câu.</span></span></label>
+            <label class="flex items-start gap-2 p-3 rounded-xl border border-slate-700 cursor-pointer"><input type="radio" name="as-mode" value="test" class="mt-1 accent-purple-500"><span><b>Kiểm tra lấy điểm</b><br><span class="text-xs text-slate-400">Có thời gian làm bài do thầy/cô đặt, mỗi học sinh làm 1 lần, có bảng điểm.</span></span></label>
+          </div>
+          <div class="grid md:grid-cols-2 gap-3">
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <div class="lbl">Loại câu hỏi đưa vào bài giao</div>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="as-t-mcq" checked class="accent-purple-500"> Trắc nghiệm nhiều lựa chọn — số câu: <input id="as-n-mcq" type="number" min="0" class="inp !w-20 !py-1" value="0"></label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="as-t-tf" checked class="accent-purple-500"> Trắc nghiệm đúng/sai — số câu: <input id="as-n-tf" type="number" min="0" class="inp !w-20 !py-1" value="0"></label>
+              <p class="text-[11px] text-slate-500">Số câu nhỏ hơn số câu có trong bộ đề thì hệ thống chọn ngẫu nhiên.</p>
+            </div>
+            <div id="as-test-opts" class="hidden p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+              <div class="lbl">Thiết lập bài kiểm tra</div>
+              <div class="grid grid-cols-3 gap-2 items-end">
+                <div><label class="lbl">Thời gian (phút)</label><input id="as-time" type="number" min="1" class="inp" value="30"></div>
+                <div><label class="lbl">Mở từ (tùy chọn)</label><input id="as-open" type="datetime-local" class="inp"></div>
+                <div><label class="lbl">Đóng lúc (tùy chọn)</label><input id="as-close" type="datetime-local" class="inp"></div>
+              </div>
+              <div><label class="lbl">Sau khi nộp bài, học sinh được xem</label>
+                <select id="as-reveal" class="inp"><option value="full">Điểm + đáp án đúng và giải thích</option><option value="score">Chỉ xem điểm</option></select></div>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="as-shuffle" checked class="accent-purple-500"> Đảo thứ tự câu hỏi cho mỗi học sinh</label>
+          <div class="flex flex-wrap items-center gap-2"><button id="as-create" class="btn btn-p py-3 px-6 disabled:opacity-60">🚀 Tạo bài giao và lấy link</button><span id="as-msg" class="text-xs text-slate-400"></span></div>
+          <div id="as-created" class="hidden p-4 rounded-xl bg-emerald-950/40 border border-emerald-700/40 space-y-2 text-sm">
+            <div class="font-bold text-emerald-300">✅ Đã tạo bài giao. Gửi link này cho học sinh (qua Zalo, nhóm lớp):</div>
+            <div class="flex flex-wrap items-center gap-2"><input id="as-link" readonly class="inp font-mono text-xs flex-1 min-w-[260px] select-all"><button id="as-copy" class="btn btn-ok">🔗 Chép link</button></div>
+            <div class="text-xs text-slate-300">Mã bài: <b class="font-mono text-yellow-300 text-sm" id="as-code"></b> (học sinh cũng có thể vào trang luyện tập và nhập mã này)</div>
+          </div>
+        </div>
+
+        <div class="card p-5 space-y-3">
+          <div class="flex items-center justify-between"><h3 class="font-bold">2. Các bài đã giao</h3><span id="as-count" class="text-xs text-slate-400"></span></div>
+          <div id="as-list" class="space-y-2"></div>
+        </div>
+
+        <div id="as-res-card" class="card p-5 space-y-4 hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="font-bold" id="as-res-title">Kết quả</h3>
+            <div class="flex gap-2"><button id="as-res-csv" class="btn btn-ok">📊 Tải bảng điểm (CSV)</button><button id="as-res-refresh" class="btn btn-g">🔄 Tải lại</button><button id="as-res-close" class="btn btn-g">Đóng</button></div>
+          </div>
+          <div id="as-res-sum" class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-xs"></div>
+          <div class="overflow-x-auto"><table class="w-full" id="as-res-table"><thead></thead><tbody></tbody></table></div>
+          <div><h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tỉ lệ làm đúng từng câu</h4><div id="as-res-items" class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-xs"></div></div>
         </div>
       </section>
 
@@ -444,7 +507,8 @@
   <!-- MODAL THÊM TÀI LIỆU -->
   <div id="modal-book" class="hidden fixed inset-0 z-50 bg-black/70 flex items-start justify-center overflow-y-auto p-4">
     <div class="card w-full max-w-2xl p-6 my-6 space-y-4">
-      <div class="flex items-center justify-between"><h3 class="text-lg font-bold">➕ Thêm tài liệu SGK</h3><button id="mb-close" class="text-slate-400 hover:text-white text-xl">✕</button></div>
+      <div class="flex items-center justify-between"><h3 class="text-lg font-bold" id="mb-heading">➕ Thêm tài liệu SGK</h3><button id="mb-close" class="text-slate-400 hover:text-white text-xl">✕</button></div>
+      <div id="mb-note" class="hidden text-xs p-3 rounded-xl bg-indigo-950/40 border border-indigo-700/40 text-indigo-200"></div>
       <div class="grid sm:grid-cols-3 gap-3">
         <div><label class="lbl">Môn học</label><select id="mb-subject" class="inp"></select></div>
         <div><label class="lbl">Khối lớp</label><select id="mb-grade" class="inp"></select></div>
@@ -473,5 +537,6 @@
   <script src="vendor/jszip.min.js"></script>
   <script src="giaovien.js"></script>
   <script src="exam.js"></script>
+  <script src="assign.js"></script>
 </body>
 </html>

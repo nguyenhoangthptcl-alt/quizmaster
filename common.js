@@ -63,6 +63,34 @@
   }
   QM.sound = new SoundFX();
 
+
+  // ---------- Chấm bài giao (dùng chung cho trang học sinh và trang giáo viên) ----------
+  QM.arr = function (v) {
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') return Object.keys(v).sort((a, b) => a - b).map(k => v[k]);
+    return [];
+  };
+  // qs: [{t:'mcq'|'tf'}]; key: [{a: chỉ số đáp án | [4 boolean]}]; ans: {q0: số | "TFT-"}
+  // Câu đúng/sai: đúng 1 ý = 10%, 2 ý = 25%, 3 ý = 50%, 4 ý = 100% (trọng số wTf, mặc định bằng 4 câu nhiều lựa chọn)
+  QM.scoreAssign = function (qs, key, ans, opt) {
+    opt = opt || {}; ans = ans || {}; const wTf = opt.wTf || 4;
+    let earned = 0, max = 0, nOk = 0; const detail = [];
+    qs.forEach((q, i) => {
+      const k = key[i] || {}, a = ans['q' + i];
+      if (opt.onlyAnswered && a === undefined) { detail.push(null); return; }
+      if (q.t === 'tf') {
+        max += wTf; const str = typeof a === 'string' ? a : '', ka = QM.arr(k.a); let c = 0;
+        for (let j = 0; j < 4; j++) { const ch = str.charAt(j); if ((ch === 'T' && ka[j] === true) || (ch === 'F' && ka[j] === false)) c++; }
+        const f = [0, 0.1, 0.25, 0.5, 1][c]; earned += wTf * f; if (c === 4) nOk++;
+        detail.push({ type: 'tf', c, f });
+      } else {
+        max += 1; const ok = a !== undefined && a === k.a; if (ok) { earned += 1; nOk++; }
+        detail.push({ type: 'mcq', ok });
+      }
+    });
+    return { earned, max, score10: max ? Math.round(earned / max * 1000) / 100 : 0, nOk, detail };
+  };
+
   // ---------- Firebase ----------
   QM.firebaseReady = function () {
     const c = (window.QM_CONFIG || {}).firebase || {};

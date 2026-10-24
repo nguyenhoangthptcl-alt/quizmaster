@@ -404,7 +404,7 @@ CHỈ trả về JSON hợp lệ:
           <div class="flex flex-wrap gap-2">
             <button class="btn btn-ok" data-ex="de" data-i="${i}">⬇️ Đề (Word)</button>
             <button class="btn btn-p" data-ex="key" data-i="${i}">⬇️ Đáp án + HD chấm (Word)</button>
-            <button class="btn btn-g" data-ex="live" data-i="${i}" title="Đưa các câu Phần I sang phòng thi trực tuyến">🚀 Phần I → phòng thi</button>
+            <button class="btn btn-g" data-ex="live" data-i="${i}" title="Đưa đề sang tab Tạo đề để giao bài / mở phòng thi">📤 Giao bài / phòng thi</button>
           </div></div>
         ${ex.warnings.length ? `<div class="text-xs text-amber-300 bg-amber-950/40 border border-amber-700/40 rounded-lg p-2">⚠️ ${ex.warnings.map(esc).join(' ')}</div>` : ''}
         <details><summary class="cursor-pointer text-xs font-semibold text-slate-300 select-none">👁 Xem trước nội dung đề và đáp án</summary><div class="mt-3 space-y-3 text-sm">${previewHtml(ex)}</div></details>
@@ -589,11 +589,12 @@ CHỈ trả về JSON hợp lệ:
       if (b.dataset.ex === 'de') save(await examBlob(ex), fname('De', ex));
       else if (b.dataset.ex === 'key') save(await keyBlob(ex), fname('DapAn', ex));
       else if (b.dataset.ex === 'live') {
-        const qs = ex.p1.map(q => ({ question: q.cauHoi, options: q.phuongAn.slice(), answer: q.dapAn, explanation: q.giaiThich }));
-        if (!qs.length) return QM.toast('Mã đề này không có Phần I.', 'error');
-        const a = app(); a.setQuiz({ title: `${E.result.meta.kyThi || 'Đề kiểm tra'} - Mã ${ex.code} (Phần I)`, subject: E.result.meta.mon || '', grade: E.result.meta.lop ? 'Lớp ' + E.result.meta.lop : '', scopeLabel: 'Đề theo ma trận', questions: qs });
+        const qs = ex.p1.map(q => ({ question: q.cauHoi, options: q.phuongAn.slice(), answer: q.dapAn, explanation: q.giaiThich }))
+          .concat(ex.p2.map(c => ({ type: 'tf', question: c.dan, statements: c.y.map(y => ({ text: y.noiDung, answer: !!y.dung, explanation: y.giaiThich || '' })), explanation: '' })));
+        if (!qs.length) return QM.toast('Mã đề này chưa có câu hỏi.', 'error');
+        const a = app(); a.setQuiz({ title: `${E.result.meta.kyThi || 'Đề kiểm tra'} - Mã ${ex.code}`, subject: E.result.meta.mon || '', grade: E.result.meta.lop ? 'Lớp ' + E.result.meta.lop : '', scopeLabel: 'Đề theo ma trận', questions: qs });
         a.setTopic(`${E.result.meta.kyThi || 'Đề kiểm tra'} - Mã ${ex.code}`); a.setView('create');
-        QM.toast('Đã đưa Phần I sang tab Tạo đề. Thầy bấm “Mở phòng thi” để cho học sinh thi trực tuyến.', 'success');
+        QM.toast('Đã đưa đề sang tab Tạo đề. Thầy/cô có thể mở phòng thi (Phần I) hoặc vào tab Giao bài để giao cả Phần I và Phần II cho học sinh làm ở nhà.', 'success');
       }
     } catch (err) { QM.toast(err.message, 'error'); }
   });

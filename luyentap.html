@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luyện tập / Làm bài kiểm tra - AI QuizMaster</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .inp { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: .75rem; padding: .6rem .8rem; color: #fff; outline: none; font-size: .9rem; }
+    .inp:focus { border-color: #a855f7; }
+    .lbl { display: block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; margin-bottom: .25rem; }
+    .btn { padding: .6rem 1.1rem; border-radius: .8rem; font-weight: 800; font-size: .85rem; transition: all .15s; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-p { background: linear-gradient(90deg,#db2777,#7c3aed,#4f46e5); color: #fff; }
+    .btn-g { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; }
+    .opt { width: 100%; text-align: left; padding: .7rem .9rem; border-radius: .8rem; border: 2px solid #334155; background: #0f172a; color: #e2e8f0; font-size: .9rem; transition: all .12s; }
+    .opt:hover:not(:disabled) { border-color: #a855f7; }
+    .opt.sel { border-color: #a855f7; background: #3b0764; color: #fff; }
+    .opt.ok { border-color: #10b981; background: #064e3b; color: #d1fae5; }
+    .opt.bad { border-color: #f43f5e; background: #4c0519; color: #ffe4e6; }
+    .tfb { padding: .35rem .8rem; border-radius: .6rem; border: 2px solid #334155; background: #0f172a; font-weight: 800; font-size: .8rem; color: #cbd5e1; }
+    .tfb.sel { border-color: #a855f7; background: #3b0764; color: #fff; }
+    .tfb.ok { border-color: #10b981; background: #064e3b; color: #d1fae5; }
+    .tfb.bad { border-color: #f43f5e; background: #4c0519; color: #ffe4e6; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased">
+  <header class="border-b border-slate-800 bg-slate-950/90 sticky top-0 z-40">
+    <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center text-white font-black">Q</div>
+        <span class="font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-300 bg-clip-text text-transparent">AI QuizMaster</span>
+        <span class="hidden sm:inline text-xs text-slate-500">• Luyện tập &amp; kiểm tra</span>
+      </div>
+      <div id="hd-timer" class="hidden items-center gap-2"><span class="text-xs text-slate-400">Còn lại</span><span id="timer-text" class="font-mono font-black text-lg text-yellow-300">00:00</span></div>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full max-w-3xl mx-auto p-4 sm:p-6 space-y-5">
+    <div id="scr-noconfig" class="hidden bg-slate-950 p-6 rounded-3xl border border-amber-700/50 text-center space-y-2"><div class="text-5xl">🛠️</div><h2 class="text-xl font-black">Hệ thống chưa được cài đặt</h2><p class="text-sm text-slate-300">Thầy/cô cần dán thông số Firebase vào file <code class="text-yellow-300">config.js</code>.</p></div>
+
+    <!-- 1. Nhập mã -->
+    <div id="scr-entry" class="hidden bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-5">
+      <div class="text-center space-y-1"><div class="text-4xl">🏠</div><h1 class="text-2xl font-black">Luyện tập / Làm bài kiểm tra</h1><p class="text-xs text-slate-400">Nhập mã bài do thầy cô gửi (hoặc mở link thầy cô gửi)</p></div>
+      <div><label class="lbl">Mã bài (6 ký tự)</label><input id="in-code" maxlength="6" autocomplete="off" placeholder="VD: K7H2QA" class="inp text-center text-2xl font-black font-mono tracking-widest uppercase text-yellow-300"></div>
+      <p id="entry-error" class="hidden text-sm text-rose-400 font-semibold text-center"></p>
+      <button id="btn-enter" class="btn btn-p w-full py-3.5">Tiếp tục</button>
+    </div>
+
+    <!-- 2. Thông tin bài -->
+    <div id="scr-info" class="hidden bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+      <div class="space-y-1"><span id="info-badge" class="inline-block text-[11px] font-bold px-2 py-0.5 rounded"></span><h2 id="info-title" class="text-xl font-black text-white"></h2><p id="info-teacher" class="text-xs text-slate-400"></p></div>
+      <div id="info-facts" class="grid grid-cols-2 gap-2 text-xs"></div>
+      <div id="info-msg" class="hidden text-sm p-3 rounded-xl bg-amber-950/40 border border-amber-700/40 text-amber-200"></div>
+      <div id="info-who" class="grid sm:grid-cols-2 gap-3">
+        <div><label class="lbl" id="lbl-name">Họ và tên</label><input id="in-name" maxlength="40" class="inp" placeholder="Nguyễn An"></div>
+        <div><label class="lbl" id="lbl-cls">Lớp</label><input id="in-cls" maxlength="20" class="inp" placeholder="12A8"></div>
+      </div>
+      <div id="info-practice-opts" class="hidden p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-sm">
+        <div class="lbl">Em muốn luyện</div>
+        <label id="pr-mcq-wrap" class="flex items-center gap-2"><input type="checkbox" id="pr-mcq" checked class="accent-purple-500"> Câu nhiều lựa chọn (<span id="pr-mcq-n"></span> câu)</label>
+        <label id="pr-tf-wrap" class="flex items-center gap-2"><input type="checkbox" id="pr-tf" checked class="accent-purple-500"> Câu đúng/sai (<span id="pr-tf-n"></span> câu)</label>
+        <div class="flex items-center gap-2"><span>Số câu:</span><input id="pr-n" type="number" min="1" class="inp !w-24 !py-1.5"><span class="text-xs text-slate-500">(để trống = tất cả)</span></div>
+      </div>
+      <button id="btn-start" class="btn btn-p w-full py-3.5">Bắt đầu</button>
+      <button id="btn-info-back" class="w-full text-xs text-slate-500 hover:text-slate-300 underline">← Nhập mã khác</button>
+    </div>
+
+    <!-- 3. Luyện tập từng câu -->
+    <div id="scr-practice" class="hidden space-y-4">
+      <div class="flex items-center justify-between bg-slate-950 px-4 py-2.5 rounded-2xl border border-slate-800 text-sm">
+        <span class="font-bold text-purple-300" id="pr-prog"></span><span class="font-bold text-emerald-400" id="pr-score"></span>
+      </div>
+      <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+        <div class="text-[11px] font-bold text-amber-300" id="pr-type"></div>
+        <p class="text-base font-bold leading-relaxed whitespace-pre-line" id="pr-q"></p>
+        <div id="pr-body" class="space-y-2"></div>
+        <div id="pr-fb" class="hidden p-3 rounded-xl text-sm space-y-1"></div>
+        <div class="flex justify-end gap-2"><button id="pr-check" class="btn btn-p hidden">Kiểm tra</button><button id="pr-next" class="btn btn-p hidden">Câu tiếp ➡️</button></div>
+      </div>
+    </div>
+
+    <!-- 4. Làm bài kiểm tra -->
+    <div id="scr-test" class="hidden space-y-4">
+      <div class="bg-slate-950 px-4 py-3 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-sm sticky top-16 z-30">
+        <div><div class="font-bold" id="te-title"></div><div class="text-xs text-slate-400">Đã trả lời <b id="te-done" class="text-emerald-400">0</b>/<span id="te-total"></span> câu • Bài được lưu tự động</div></div>
+        <button id="btn-submit" class="btn btn-p">Nộp bài</button>
+      </div>
+      <div id="te-list" class="space-y-4"></div>
+      <div class="text-center pb-4"><button id="btn-submit2" class="btn btn-p px-10 py-3.5">Nộp bài</button></div>
+    </div>
+
+    <!-- 5. Kết quả -->
+    <div id="scr-result" class="hidden space-y-4">
+      <div class="bg-slate-950 p-6 sm:p-8 rounded-3xl border border-purple-500/30 text-center space-y-3 shadow-2xl">
+        <div class="text-5xl" id="rs-icon">🏆</div>
+        <h2 class="text-xl font-black" id="rs-title">Kết quả</h2>
+        <div class="text-5xl font-black text-yellow-400" id="rs-score">0</div>
+        <div class="text-sm text-slate-300" id="rs-detail"></div>
+        <div class="text-xs text-slate-400" id="rs-note"></div>
+        <div class="flex flex-wrap justify-center gap-2 pt-2"><button id="btn-again" class="btn btn-g">🔁 Luyện lại</button><button id="btn-home" class="btn btn-g">Về trang đầu</button></div>
+      </div>
+      <div id="rs-review" class="space-y-3"></div>
+    </div>
+  </main>
+
+  <footer class="py-4 px-4 text-center text-xs text-slate-500 space-y-1">
+    <p>AI QuizMaster - Hệ thống phát triển bởi Nguyễn Văn Hoàng, giáo viên Trường THPT Chi Lăng, Lạng Sơn</p>
+    <p><a href="index.html" class="underline hover:text-slate-300">Vào phòng thi trực tiếp</a> • <a href="giaovien.html" class="underline hover:text-slate-300">Giáo viên đăng nhập</a></p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="common.js"></script>
+  <script src="luyentap.js"></script>
+</body>
+</html>

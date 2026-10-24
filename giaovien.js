@@ -12,7 +12,7 @@
   ];
   const S = {
     fb: null, user: null, registering: false, view: 'create',
-    staticBooks: [], dbBooks: [], parsed: {},        // sách và cache đã phân tích
+    staticBooks: [], dbBooks: [], hidden: {}, parsed: {},        // sách và cache đã phân tích
     geminiKey: '', geminiModel: '',
     quiz: { title: '', subject: 'Công nghệ', grade: 'Lớp 10', questions: [] },
     scope: { mode: 'lesson', lessonId: null, chapterId: null, multi: new Set(), book: null, parsedBook: null, result: null, edited: false },
@@ -26,12 +26,13 @@
   function showScreen(n) { SCREENS.forEach(s => $(s === 'app' ? 'app' : 'scr-' + s).classList.toggle('hidden', s !== n)); }
   function setView(v) {
     S.view = v;
-    ['create', 'exam', 'library', 'room', 'books', 'settings', 'admin'].forEach(x => $('view-' + x).classList.toggle('hidden', x !== v));
+    ['create', 'exam', 'assign', 'library', 'room', 'books', 'settings', 'admin'].forEach(x => $('view-' + x).classList.toggle('hidden', x !== v));
     document.querySelectorAll('#main-nav .navtab').forEach(b => b.classList.toggle('on', b.dataset.view === v));
     if (v === 'books') renderBooks();
     if (v === 'admin') loadAdmin();
     if (v === 'room') renderRoomNone();
     if (v === 'exam' && window.QMExam) window.QMExam.onShow();
+    if (v === 'assign' && window.QMAssign) window.QMAssign.onShow();
   }
   document.querySelectorAll('#main-nav .navtab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
   $('btn-sound').onclick = () => { QM.sound.isMuted = !QM.sound.isMuted; $('sound-icon').textContent = QM.sound.isMuted ? '🔇' : '🔊'; };
@@ -143,6 +144,8 @@
       snap.forEach(ch => { const v = ch.val(); if (v && v.text) S.dbBooks.push({ id: 'db_' + ch.key, key: ch.key, source: 'db', ...v }); });
       refreshBookSelect(true); if (S.view === 'books') renderBooks();
     }, e => QM.toast('Không đọc được thư viện tài liệu: ' + QM.fbError(e), 'error'));
+    S.refs.hid = db().ref('settings/hiddenBooks');
+    S.refs.hid.on('value', snap => { S.hidden = snap.val() || {}; refreshBookSelect(true); if (S.view === 'books') renderBooks(); }, () => { });
     S.refs.quizzes = db().ref('quizzes/' + S.user.username);
     S.refs.quizzes.on('value', snap => renderLibrary(snap), () => { });
     refreshBookSelect();
@@ -172,9 +175,13 @@
     try { const j = await (await fetch('sgk/index.json', { cache: 'no-cache' })).json(); S.staticBooks = (j.books || []).map(b => ({ ...b, source: 'file' })); }
     catch (e) { S.staticBooks = []; }
   }
-  const allBooks = () => [...S.staticBooks, ...S.dbBooks];
+  const allBooks = () => {
+    const rep = new Set(S.dbBooks.map(b => b.replaces).filter(Boolean));
+    return [...S.staticBooks.filter(b => !(S.hidden || {})[b.id] && !rep.has(b.id)), ...S.dbBooks];
+  };
+  const verOf = b => b ? b.id + ':' + (b.updatedAt || b.createdAt || 0) + ':' + (b.text ? b.text.length : 0) : '';
   async function getParsed(b) {
-    const ver = b.id + ':' + (b.text ? b.text.length : 0);
+    const ver = verOf(b);
     if (S.parsed[ver]) return S.parsed[ver];
     let text, supplement = null;
     if (b.source === 'file') {
@@ -198,7 +205,7 @@
     const subj = $('ai-subject').value, grade = $('ai-grade').value, prev = $('ai-book').value;
     const list = allBooks().filter(b => b.subject === subj && b.grade === grade);
     $('ai-book').innerHTML = list.map(b => `<option value="${esc(b.id)}">${esc(b.title)}${b.source === 'db' ? ' (thư viện chung)' : ''}</option>`).join('');
-    if (keep && list.some(b => b.id === prev)) { $('ai-book').value = prev; if (S.scope.book && S.scope.book.id === prev) { return; } }
+    if (keep && list.some(b => b.id === prev)) { $('ai-book').value = prev; const cur = list.find(b => b.id === prev); if (S.scope.book && S.scope.book.id === prev && verOf(S.scope.book) === verOf(cur)) { return; } }
     $('book-none').classList.toggle('hidden', list.length > 0);
     $('bn-subject').textContent = subj; $('bn-grade').textContent = grade;
     $('ai-book').classList.toggle('hidden', list.length === 0);
@@ -252,7 +259,7 @@
     const p = e.target.closest('.mode-pill'); if (!p || p.classList.contains('off')) return;
     S.scope.mode = p.dataset.mode; S.scope.userFree = p.dataset.mode === 'free'; applyMode();
   });
-  $('btn-add-book-here').onclick = () => { $('mb-subject').value = $('ai-subject').value; $('mb-grade').value = $('ai-grade').value; openBookModal(); };
+  $('btn-add-book-here').onclick = () => { const sj = $('ai-subject').value, gr = $('ai-grade').value; openBookModal(null); $('mb-subject').value = sj; $('mb-grade').value = gr; };
 
   function applyMode() {
     const sc = S.scope, has = !!sc.parsedBook;
@@ -306,7 +313,7 @@
   /* ======================= SINH ĐỀ BẰNG AI ======================= */
   function currentParams() {
     return {
-      subject: $('ai-subject').value, grade: $('ai-grade').value, count: parseInt($('ai-count').value, 10) || 10,
+      subject: $('ai-subject').value, grade: $('ai-grade').value, count: (v => isNaN(v) ? 10 : v)(parseInt($('ai-count').value, 10)), countTf: parseInt($('ai-count-tf').value, 10) || 0,
       diff: $('ai-diff').value, title: $('ai-topic').value.trim(), text: $('scope-text').value.trim(),
       sc: S.scope.result, book: S.scope.book, parsed: S.scope.parsedBook
     };
@@ -422,20 +429,69 @@
     return { out, dropped };
   }
 
+  /* ---- Câu đúng/sai (GDPT 2018): 1 dẫn + 4 ý a,b,c,d ---- */
+  function tfPrompt(P, quotas, count, existing) {
+    const lessons = P.sc && P.sc.res ? P.sc.res.lessons : [];
+    const bookTitle = P.book ? P.book.title : '';
+    const L = [];
+    L.push(`Bạn là giáo viên ${P.subject} ${P.grade}, đang soạn câu hỏi trắc nghiệm ĐÚNG/SAI theo Chương trình GDPT 2018: mỗi câu gồm một "dẫn" chung (đoạn thông tin, tình huống hoặc số liệu bằng văn bản) và 4 ý a), b), c), d); mỗi ý là một nhận định mà học sinh chọn ĐÚNG hoặc SAI.`);
+    L.push(`PHẠM VI KIẾN THỨC: ${P.sc && P.sc.label ? P.sc.label : P.title}${bookTitle ? ' — ' + bookTitle : ''}`, '', 'QUY TẮC BẮT BUỘC:');
+    L.push(P.text ? '1. CHỈ dùng thông tin trong khối <TAI_LIEU>. Không dùng kiến thức bên ngoài, không bịa số liệu, không hỏi về bài/chương khác.' : `1. Không có tài liệu kèm theo: ra câu hỏi đúng chuẩn chương trình phổ thông Việt Nam về chủ đề "${P.title}".`);
+    if (lessons.length) {
+      L.push('2. Mỗi câu PHẢI có trường "lesson" = số bài (số nguyên) mà kiến thức thuộc về. Chỉ dùng các số bài: ' + lessons.map(l => l.num).join(', ') + '.');
+      L.push('3. Số câu theo bài (tổng đúng ' + count + ' câu): ' + Object.keys(quotas).map(n => `Bài ${n}: ${quotas[n]} câu`).join('; ') + '. Nếu tài liệu một bài quá ngắn, ra ít câu hơn, KHÔNG bịa.');
+    } else L.push(`2. Tạo đúng ${count} câu.`);
+    L.push(`4. Mức độ: ${P.diff}. Ý a, b dễ hơn; ý c, d khó dần.`);
+    L.push('5. Mỗi ý là mệnh đề khẳng định rõ ràng, kết luận được Đúng hoặc Sai dứt khoát. Mỗi câu nên có cả ý đúng và ý sai. Dẫn phải phù hợp với cả 4 ý.');
+    L.push('6. "giaiThich" của từng ý: nêu căn cứ; nếu ý sai thì nêu mệnh đề đúng sửa lại. Không ghi số trang.');
+    L.push('7. Các câu không trùng ý nhau' + (existing && existing.length ? ' và không trùng:\n' + existing.map(q => '   - ' + q.slice(0, 90)).join('\n') : '') + '. Không dùng LaTeX hay markdown.');
+    if (P.text) L.push('', '<TAI_LIEU>', P.text.slice(0, 150000), '</TAI_LIEU>');
+    L.push('', 'Chỉ trả về JSON hợp lệ:', '{"cau":[{' + (lessons.length ? '"lesson":5,' : '') + '"dan":"...","y":[{"noiDung":"...","dung":true,"giaiThich":"..."},{"noiDung":"...","dung":false,"giaiThich":"..."},{"noiDung":"...","dung":true,"giaiThich":"..."},{"noiDung":"...","dung":false,"giaiThich":"..."}]}]}');
+    return L.join('\n');
+  }
+  function normTf(r, allowed) {
+    if (!r || typeof r.dan !== 'string' || !Array.isArray(r.y) || r.y.length < 4) return null;
+    const st = r.y.slice(0, 4).map(y => {
+      if (!y || typeof y.noiDung !== 'string') return null;
+      let d = y.dung; if (typeof d === 'string') d = /^(đ|d|true|đúng|dung)/i.test(d.trim());
+      if (typeof d !== 'boolean') return null;
+      return { text: y.noiDung.replace(/\*\*/g, '').replace(/^\s*[a-dA-D][.)]\s+/, '').trim(), answer: d, explanation: String(y.giaiThich || '').replace(/\*\*/g, '').trim() };
+    });
+    if (st.some(x => !x || !x.text)) return null;
+    const q = { type: 'tf', question: r.dan.replace(/\*\*/g, '').trim(), statements: st, explanation: '' };
+    if (allowed) { const l = parseInt(r.lesson, 10); if (!allowed.has(l)) return null; q.lesson = l; }
+    return q;
+  }
+  async function genTf(P, hasLessons, allowed) {
+    const seen = new Set(); let got = [];
+    for (let attempt = 0; attempt < 3 && got.length < P.countTf; attempt++) {
+      const need = P.countTf - got.length;
+      const quotas = hasLessons ? SGK.allocate(P.sc.res.lessons, need) : {};
+      const raw = parseJsonLoose(await callGemini(tfPrompt(P, quotas, need, got.map(q => q.question))));
+      (Array.isArray(raw) ? raw : (raw.cau || raw.questions || [])).forEach(r => {
+        const q = normTf(r, allowed); if (!q) return;
+        const key = q.question.toLowerCase().replace(/\W+/g, '').slice(0, 60);
+        if (seen.has(key)) return; seen.add(key); got.push(q);
+      });
+    }
+    return got.slice(0, P.countTf);
+  }
+
   async function generate() {
     const P = currentParams();
     if (!P.title) { QM.toast('Hãy nhập tên bài kiểm tra.', 'error'); return; }
     const hasLessons = P.sc && P.sc.res && P.sc.ids.length > 0;
     if (S.scope.mode !== 'free' && S.scope.parsedBook && !hasLessons) { QM.toast('Thầy chưa chọn bài/chương nào.', 'error'); return; }
+    if (P.count + P.countTf === 0) { QM.toast('Hãy chọn ít nhất 1 câu (nhiều lựa chọn hoặc đúng/sai).', 'error'); return; }
     if (!S.geminiKey) {
-      QM.toast('Chưa có API key nên chuyển sang lấy câu mẫu. Nhập key ở tab Cài đặt để AI tự sinh đề.', 'info');
-      return loadSample();
+      if (P.count > 0) { QM.toast('Chưa có API key nên chuyển sang lấy câu mẫu. Nhập key ở tab Cài đặt để AI tự sinh đề.', 'info'); return loadSample(); }
+      QM.toast('Cần nhập Gemini API key ở tab Cài đặt để tạo câu đúng/sai.', 'error'); return;
     }
     const btn = $('btn-generate'); btn.disabled = true; $('gen-spin').classList.remove('hidden'); $('gen-text').textContent = 'AI đang đọc phạm vi đã chọn và ra đề...';
     try {
       const allowed = hasLessons ? new Set(P.sc.res.lessons.map(l => l.num)) : null;
       const quotaFull = hasLessons ? SGK.allocate(P.sc.res.lessons, P.count) : {};
-      const seen = new Set(); let got = [], dropped = 0;
+      const seen = new Set(); let got = [];
       for (let attempt = 0; attempt < 3 && got.length < P.count; attempt++) {
         const need = P.count - got.length;
         let quotas = quotaFull;
@@ -449,15 +505,18 @@
         }
         const raw = parseJsonLoose(await callGemini(buildPrompt(P, quotas, need, got.map(q => q.question))));
         const r = normalize(raw.questions || raw, allowed, seen);
-        dropped += r.dropped; got = got.concat(r.out);
+        got = got.concat(r.out);
       }
-      if (!got.length) throw new Error('AI chưa tạo được câu hỏi hợp lệ trong phạm vi đã chọn. Thầy thử bổ sung thêm nội dung vào khung kiến thức rồi tạo lại.');
       got = got.slice(0, P.count);
-      setQuiz({ title: P.title, subject: P.subject, grade: P.grade, bookTitle: P.book ? P.book.title : '', scopeLabel: P.sc ? P.sc.label : '', questions: got });
+      let tf = [];
+      if (P.countTf > 0) { $('gen-text').textContent = 'AI đang soạn câu đúng/sai...'; tf = await genTf(P, hasLessons, allowed); }
+      if (!got.length && !tf.length) throw new Error('AI chưa tạo được câu hỏi hợp lệ trong phạm vi đã chọn. Thầy thử bổ sung thêm nội dung vào khung kiến thức rồi tạo lại.');
+      setQuiz({ title: P.title, subject: P.subject, grade: P.grade, bookTitle: P.book ? P.book.title : '', scopeLabel: P.sc ? P.sc.label : '', questions: got.concat(tf) });
       QM.sound.cheer();
-      let msg = `Đã tạo ${got.length} câu hỏi` + (hasLessons ? ' đúng phạm vi: ' + P.sc.label : '') + '.';
-      if (got.length < P.count) msg += ` (Nội dung chỉ đủ cho ${got.length}/${P.count} câu - hãy bổ sung nội dung hoặc giảm số câu.)`;
-      QM.toast(msg, got.length < P.count ? 'info' : 'success');
+      let msg = `Đã tạo ${got.length} câu nhiều lựa chọn` + (tf.length ? ` và ${tf.length} câu đúng/sai` : '') + (hasLessons ? ' đúng phạm vi: ' + P.sc.label : '') + '.';
+      const short = got.length < P.count || tf.length < P.countTf;
+      if (short) msg += ' (Nội dung chỉ đủ cho số câu như trên - hãy bổ sung nội dung hoặc giảm số câu.)';
+      QM.toast(msg, short ? 'info' : 'success');
     } catch (e) { QM.toast(e.message, 'error'); }
     finally { btn.disabled = false; $('gen-spin').classList.add('hidden'); $('gen-text').textContent = '✨ Tạo đề bằng AI theo phạm vi đã chọn'; }
   }
@@ -471,7 +530,7 @@
     const nums = new Set(P.sc.res.lessons.map(l => l.num));
     let pool = QM.shuffle(bank.filter(q => nums.has(q.bai)));
     if (!pool.length) { QM.toast('Chưa có câu mẫu cho ' + P.sc.label + '. Hãy nhập API key (tab Cài đặt) để AI tự ra đề cho đúng bài này.', 'error'); return; }
-    pool = pool.slice(0, P.count).map(q => shuffleQ({ question: q.question, options: q.options, answer: q.answer, explanation: q.explanation, lesson: q.bai }));
+    pool = pool.slice(0, P.count || 10).map(q => shuffleQ({ question: q.question, options: q.options, answer: q.answer, explanation: q.explanation, lesson: q.bai }));
     setQuiz({ title: P.title || P.sc.label, subject: P.subject, grade: P.grade, bookTitle: P.book.title, scopeLabel: P.sc.label, questions: pool });
     QM.toast(`Đã lấy ${pool.length} câu mẫu thuộc phạm vi “${P.sc.label}”` + (pool.length < P.count ? ' (trong kho chỉ có từng đó câu cho phạm vi này).' : '.'), 'success');
   }
@@ -479,13 +538,23 @@
 
   /* ======================= DANH SÁCH CÂU HỎI ======================= */
   let editIdx = -1;
+  const isTf = q => q && q.type === 'tf';
   function setQuiz(q) { S.quiz = { ...q, createdAt: Date.now() }; editIdx = -1; renderQuestions(); }
   function renderQuestions() {
     const qs = S.quiz.questions || [];
+    const nT = qs.filter(isTf).length;
     $('q-count').textContent = qs.length;
-    $('q-meta').textContent = qs.length ? `${S.quiz.title || 'Bộ đề'} • ${S.quiz.scopeLabel || S.quiz.subject || ''}` : 'Chưa có câu hỏi.';
+    $('q-meta').textContent = qs.length ? `${S.quiz.title || 'Bộ đề'} • ${S.quiz.scopeLabel || S.quiz.subject || ''} • ${qs.length - nT} nhiều lựa chọn, ${nT} đúng/sai` : 'Chưa có câu hỏi.';
     if (!qs.length) { $('q-list').innerHTML = '<div class="p-8 text-center text-slate-500 italic text-sm">Chưa có câu hỏi. Chọn phạm vi ở bên trái rồi bấm tạo đề.</div>'; return; }
+    const btns = i => `<button class="text-slate-400 hover:text-white text-xs p-1" data-act="edit" data-i="${i}" title="Sửa">✏️</button><button class="text-slate-500 hover:text-rose-400 text-xs p-1" data-act="del" data-i="${i}" title="Xóa">✕</button>`;
+    const chip = q => `${q.lesson !== undefined ? `<span class="inline-block mt-1 mr-1 text-[10px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Bài ${q.lesson}</span>` : ''}${isTf(q) ? '<span class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">Đúng/Sai</span>' : ''}`;
     $('q-list').innerHTML = qs.map((q, i) => {
+      if (i === editIdx && isTf(q)) return `
+        <div class="p-4 rounded-xl bg-slate-900 border border-purple-600 space-y-2">
+          <label class="lbl">Dẫn (đoạn thông tin / tình huống)</label><textarea id="eq-q" rows="3" class="inp">${esc(q.question)}</textarea>
+          ${q.statements.map((s, j) => `<div class="grid grid-cols-12 gap-2 items-center"><span class="col-span-1 text-xs font-bold">${'abcd'[j]})</span><input id="eq-s${j}" class="inp col-span-7" value="${esc(s.text)}"><select id="eq-a${j}" class="inp col-span-2"><option value="1" ${s.answer ? 'selected' : ''}>Đúng</option><option value="0" ${s.answer ? '' : 'selected'}>Sai</option></select><span></span><input id="eq-x${j}" class="inp col-span-12" placeholder="Giải thích ý ${'abcd'[j]}" value="${esc(s.explanation || '')}"></div>`).join('')}
+          <div class="flex gap-2"><button class="btn btn-ok" data-act="save" data-i="${i}">Lưu</button><button class="btn btn-g" data-act="cancel">Hủy</button></div>
+        </div>`;
       if (i === editIdx) return `
         <div class="p-4 rounded-xl bg-slate-900 border border-purple-600 space-y-2">
           <textarea id="eq-q" rows="2" class="inp">${esc(q.question)}</textarea>
@@ -493,16 +562,21 @@
           <textarea id="eq-e" rows="2" class="inp" placeholder="Giải thích">${esc(q.explanation || '')}</textarea>
           <div class="flex gap-2"><button class="btn btn-ok" data-act="save" data-i="${i}">Lưu</button><button class="btn btn-g" data-act="cancel">Hủy</button></div>
         </div>`;
+      if (isTf(q)) return `
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+          <div class="flex items-start gap-2">
+            <span class="w-6 h-6 rounded-md bg-amber-900/60 text-amber-300 font-bold text-xs flex items-center justify-center shrink-0">${i + 1}</span>
+            <div class="flex-1"><p class="text-sm font-bold text-white leading-snug">${esc(q.question)}</p>${chip(q)}</div>${btns(i)}
+          </div>
+          <div class="space-y-1.5 text-xs">${q.statements.map((s, j) => `<div data-act="tf" data-i="${i}" data-j="${j}" class="cursor-pointer p-2 rounded-lg border flex items-start justify-between gap-2 ${s.answer ? 'bg-emerald-600/20 border-emerald-600 text-emerald-100' : 'bg-rose-600/15 border-rose-700 text-rose-100'}"><span><b>${'abcd'[j]})</b> ${esc(s.text)}</span><b class="shrink-0">${s.answer ? 'ĐÚNG' : 'SAI'}</b></div>`).join('')}</div>
+          <p class="text-[10px] text-slate-500">Bấm vào từng ý để đổi Đúng/Sai.</p>
+          ${q.statements.some(s => s.explanation) ? `<div class="text-[11px] text-slate-400 italic bg-slate-950 p-2 rounded border border-slate-800 space-y-0.5">${q.statements.map((s, j) => s.explanation ? `<div>💡 ${'abcd'[j]}) ${esc(s.explanation)}</div>` : '').join('')}</div>` : ''}
+        </div>`;
       return `
         <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
           <div class="flex items-start gap-2">
             <span class="w-6 h-6 rounded-md bg-purple-900/60 text-purple-300 font-bold text-xs flex items-center justify-center shrink-0">${i + 1}</span>
-            <div class="flex-1">
-              <p class="text-sm font-bold text-white leading-snug">${esc(q.question)}</p>
-              ${q.lesson !== undefined ? `<span class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Bài ${q.lesson}</span>` : ''}
-            </div>
-            <button class="text-slate-400 hover:text-white text-xs p-1" data-act="edit" data-i="${i}" title="Sửa">✏️</button>
-            <button class="text-slate-500 hover:text-rose-400 text-xs p-1" data-act="del" data-i="${i}" title="Xóa">✕</button>
+            <div class="flex-1"><p class="text-sm font-bold text-white leading-snug">${esc(q.question)}</p>${chip(q)}</div>${btns(i)}
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             ${q.options.map((o, j) => `<div data-act="ans" data-i="${i}" data-j="${j}" class="cursor-pointer p-2 rounded-lg border flex items-center justify-between gap-2 ${j === q.answer ? 'bg-emerald-600/30 border-emerald-500 text-emerald-200 font-bold' : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600'}"><span><b class="opacity-70">${LETTERS[j]}.</b> ${esc(o)}</span>${j === q.answer ? '<span>✓</span>' : ''}</div>`).join('')}
@@ -517,18 +591,32 @@
     switch (t.dataset.act) {
       case 'del': qs.splice(i, 1); editIdx = -1; break;
       case 'ans': qs[i].answer = parseInt(t.dataset.j, 10); break;
+      case 'tf': { const s = qs[i].statements[parseInt(t.dataset.j, 10)]; s.answer = !s.answer; break; }
       case 'edit': editIdx = i; break;
       case 'cancel': editIdx = -1; break;
       case 'save': {
-        const q = qs[i], opts = [0, 1, 2, 3].map(j => $('eq-o' + j).value.trim());
-        if (!$('eq-q').value.trim() || opts.some(o => !o)) { QM.toast('Câu hỏi và 4 phương án không được để trống.', 'error'); return; }
-        q.question = $('eq-q').value.trim(); q.options = opts; q.explanation = $('eq-e').value.trim(); editIdx = -1; break;
+        const q = qs[i];
+        if (isTf(q)) {
+          const st = [0, 1, 2, 3].map(j => ({ text: $('eq-s' + j).value.trim(), answer: $('eq-a' + j).value === '1', explanation: $('eq-x' + j).value.trim() }));
+          if (!$('eq-q').value.trim() || st.some(s => !s.text)) { QM.toast('Dẫn và 4 ý không được để trống.', 'error'); return; }
+          q.question = $('eq-q').value.trim(); q.statements = st;
+        } else {
+          const opts = [0, 1, 2, 3].map(j => $('eq-o' + j).value.trim());
+          if (!$('eq-q').value.trim() || opts.some(o => !o)) { QM.toast('Câu hỏi và 4 phương án không được để trống.', 'error'); return; }
+          q.question = $('eq-q').value.trim(); q.options = opts; q.explanation = $('eq-e').value.trim();
+        }
+        editIdx = -1; break;
       }
     }
     renderQuestions();
   });
   $('btn-add-q').onclick = () => {
     S.quiz.questions.push({ question: 'Nội dung câu hỏi mới...', options: ['Phương án A', 'Phương án B', 'Phương án C', 'Phương án D'], answer: 0, explanation: '' });
+    if (!S.quiz.title) S.quiz.title = $('ai-topic').value.trim() || 'Bộ đề thủ công';
+    editIdx = S.quiz.questions.length - 1; renderQuestions();
+  };
+  $('btn-add-tf').onclick = () => {
+    S.quiz.questions.push({ type: 'tf', question: 'Dẫn / tình huống của câu đúng sai...', statements: [0, 1, 2, 3].map(j => ({ text: 'Nhận định ' + 'abcd'[j], answer: j % 2 === 0, explanation: '' })), explanation: '' });
     if (!S.quiz.title) S.quiz.title = $('ai-topic').value.trim() || 'Bộ đề thủ công';
     editIdx = S.quiz.questions.length - 1; renderQuestions();
   };
@@ -593,39 +681,84 @@
 
   /* ======================= TÀI LIỆU: DANH SÁCH + THÊM ======================= */
   async function renderBooks() {
-    const list = allBooks();
-    $('books-list').innerHTML = list.length ? list.map(b => {
-      const canDel = b.source === 'db' && (isAdmin() || b.owner === S.user.username);
+    const list = allBooks(), admin = isAdmin();
+    const rows = list.map(b => {
+      const mine = b.source === 'db' && (admin || b.owner === S.user.username);
+      const edit = b.source === 'db' ? (mine ? '<button class="btn btn-g" data-bk="edit">✏️ Sửa</button>' : '')
+        : (admin ? '<button class="btn btn-g" data-bk="edit">✏️ Sửa (thay bản gốc)</button>' : '<button class="btn btn-g" data-bk="edit">📋 Nhân bản để sửa</button>');
+      const del = b.source === 'db' ? (mine ? '<button class="btn btn-r" data-bk="del">🗑 Xóa</button>' : '') : (admin ? '<button class="btn btn-r" data-bk="hide">🗑 Ẩn</button>' : '');
       return `<div class="card p-4 space-y-2" data-book="${esc(b.id)}">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div><div class="font-bold text-white">${esc(b.title)}</div>
-            <div class="text-xs text-slate-400">${esc(b.subject)} • ${esc(b.grade)} • ${b.source === 'file' ? 'Có sẵn trong hệ thống' : 'Thư viện chung • thêm bởi @' + esc(b.owner || '?')}</div></div>
-          <div class="flex gap-2"><button class="btn btn-g" data-bk="toc">📑 Xem mục lục</button>${canDel ? '<button class="btn btn-r" data-bk="del">🗑 Xóa</button>' : ''}</div>
+            <div class="text-xs text-slate-400">${esc(b.subject)} • ${esc(b.grade)} • ${b.source === 'file' ? 'Có sẵn trong hệ thống' : 'Thư viện chung • thêm bởi @' + esc(b.owner || '?')}${b.replaces ? ' • <span class="text-amber-300">bản sửa của sách có sẵn</span>' : ''}</div></div>
+          <div class="flex flex-wrap gap-2"><button class="btn btn-g" data-bk="toc">📑 Mục lục</button>${edit}<button class="btn btn-g" data-bk="dl">⬇️ Tải .md</button>${del}</div>
         </div><div class="toc hidden text-xs text-slate-300 pt-2 border-t border-slate-800"></div></div>`;
-    }).join('') : '<div class="card p-8 text-center text-slate-500 italic text-sm">Chưa có tài liệu nào.</div>';
+    }).join('');
+    const hiddenList = admin ? S.staticBooks.filter(b => S.hidden[b.id]) : [];
+    $('books-list').innerHTML = (rows || '<div class="card p-8 text-center text-slate-500 italic text-sm">Chưa có tài liệu nào.</div>') +
+      (hiddenList.length ? `<div class="card p-4 space-y-2"><div class="text-sm font-bold text-slate-300">Tài liệu có sẵn đã bị ẩn</div>${hiddenList.map(b => `<div class="flex items-center justify-between text-xs"><span>${esc(b.title)}</span><button class="btn btn-g" data-restore="${esc(b.id)}">↩️ Khôi phục</button></div>`).join('')}</div>` : '');
+  }
+  async function bookText(b) {
+    if (b.source === 'db') return b.text || '';
+    const r = await fetch('sgk/' + b.file); if (!r.ok) throw new Error('Không tải được sgk/' + b.file); return r.text();
   }
   $('books-list').addEventListener('click', async e => {
+    const rs = e.target.closest('[data-restore]');
+    if (rs) { try { await db().ref('settings/hiddenBooks/' + rs.dataset.restore).remove(); QM.toast('Đã khôi phục tài liệu.', 'success'); } catch (x) { QM.toast(QM.fbError(x), 'error'); } return; }
     const btn = e.target.closest('[data-bk]'); if (!btn) return;
     const card = btn.closest('[data-book]'), b = allBooks().find(x => x.id === card.dataset.book); if (!b) return;
-    if (btn.dataset.bk === 'del') {
-      if (confirm('Xóa tài liệu “' + b.title + '” khỏi thư viện chung?')) { try { await db().ref('curriculum/' + b.key).remove(); QM.toast('Đã xóa tài liệu.', 'success'); } catch (x) { QM.toast(QM.fbError(x), 'error'); } }
-      return;
-    }
-    const toc = card.querySelector('.toc');
-    if (!toc.classList.contains('hidden')) { toc.classList.add('hidden'); return; }
     try {
-      const p = await getParsed(b), pb = p.parsed;
-      toc.innerHTML = (pb.fallback ? '<p class="text-amber-300 mb-2">Không thấy mẫu “Bài N” - hệ thống đã tách theo các tiêu đề #.</p>' : '') +
-        pb.chapters.map(c => `<div class="mb-2"><div class="font-bold text-purple-300">${esc(SGK.chapterLabel(c))}</div><ul class="pl-4 list-disc">${c.lessonIds.map(id => { const l = pb.lessons.find(x => x.id === id); const n = (l.body || '').length; return `<li>${esc(SGK.lessonLabel(l))} <span class="text-slate-500">(${n} ký tự${n < 120 ? ' - ngắn' : ''})</span></li>`; }).join('')}</ul></div>`).join('') +
-        `<div class="text-slate-400">Tổng: ${pb.chapters.length} chương, ${pb.lessons.length} bài.</div>`;
-      toc.classList.remove('hidden');
-    } catch (x) { QM.toast(x.message, 'error'); }
+      switch (btn.dataset.bk) {
+        case 'del':
+          if (confirm('Xóa tài liệu “' + b.title + '” khỏi thư viện chung?' + (b.replaces ? '\nBản sách có sẵn ban đầu sẽ được hiển thị trở lại.' : ''))) { await db().ref('curriculum/' + b.key).remove(); QM.toast('Đã xóa tài liệu.', 'success'); }
+          return;
+        case 'hide':
+          if (confirm('Ẩn tài liệu có sẵn “' + b.title + '” với tất cả giáo viên? (có thể khôi phục ở cuối danh sách)')) { await db().ref('settings/hiddenBooks/' + b.id).set(true); QM.toast('Đã ẩn tài liệu.', 'success'); }
+          return;
+        case 'dl': {
+          const text = await bookText(b);
+          const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }));
+          a.download = (b.title || 'sgk').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') + '.md'; a.click(); URL.revokeObjectURL(a.href); return;
+        }
+        case 'edit': {
+          const text = await bookText(b);
+          openBookModal(b.source === 'db' ? { kind: 'db', key: b.key, book: b, text } : { kind: 'static', book: b, text, replace: isAdmin() });
+          return;
+        }
+        case 'toc': {
+          const toc = card.querySelector('.toc');
+          if (!toc.classList.contains('hidden')) { toc.classList.add('hidden'); return; }
+          const p = await getParsed(b), pb = p.parsed;
+          toc.innerHTML = (pb.fallback ? '<p class="text-amber-300 mb-2">Không thấy mẫu “Bài N” - hệ thống đã tách theo các tiêu đề #.</p>' : '') +
+            pb.chapters.map(c => `<div class="mb-2"><div class="font-bold text-purple-300">${esc(SGK.chapterLabel(c))}</div><ul class="pl-4 list-disc">${c.lessonIds.map(id => { const l = pb.lessons.find(x => x.id === id); const n = (l.body || '').length; return `<li>${esc(SGK.lessonLabel(l))} <span class="text-slate-500">(${n} ký tự${n < 120 ? ' - ngắn' : ''})</span></li>`; }).join('')}</ul></div>`).join('') +
+            `<div class="text-slate-400">Tổng: ${pb.chapters.length} chương, ${pb.lessons.length} bài.</div>`;
+          toc.classList.remove('hidden'); return;
+        }
+      }
+    } catch (x) { QM.toast(x.message || QM.fbError(x), 'error'); }
   });
 
-  let mbParsedText = '';
-  function openBookModal() { $('modal-book').classList.remove('hidden'); previewBook(); }
-  function closeBookModal() { $('modal-book').classList.add('hidden'); }
-  $('btn-add-book').onclick = () => { $('mb-subject').value = $('ai-subject').value; $('mb-grade').value = $('ai-grade').value; openBookModal(); };
+  let mbEdit = null;
+  function openBookModal(edit) {
+    mbEdit = edit || null;
+    $('modal-book').classList.remove('hidden');
+    const note = $('mb-note');
+    if (!edit) {
+      $('mb-heading').textContent = '➕ Thêm tài liệu SGK'; $('mb-title').value = ''; $('mb-text').value = ''; $('mb-filename').textContent = ''; note.classList.add('hidden');
+      $('mb-save').textContent = 'Lưu tài liệu';
+    } else {
+      const b = edit.book;
+      $('mb-heading').textContent = '✏️ ' + (edit.kind === 'db' ? 'Sửa tài liệu SGK' : (edit.replace ? 'Sửa sách có sẵn (thay bản gốc)' : 'Nhân bản sách có sẵn để sửa'));
+      $('mb-subject').value = b.subject; $('mb-grade').value = b.grade; $('mb-title').value = b.title + (edit.kind === 'static' && !edit.replace ? ' (bản sao)' : '');
+      $('mb-text').value = edit.text; $('mb-filename').textContent = '';
+      $('mb-save').textContent = edit.kind === 'db' ? 'Lưu thay đổi' : (edit.replace ? 'Lưu và thay bản gốc' : 'Lưu bản sao');
+      note.textContent = edit.kind === 'static' ? (edit.replace ? 'Bản thầy sửa sẽ thay thế sách có sẵn cho tất cả giáo viên (xóa bản sửa thì bản gốc hiện lại). Lưu ý: phần tóm tắt bổ sung và câu hỏi mẫu đi kèm bản gốc sẽ không còn áp dụng.' : 'Tạo một bản sao trong thư viện chung để thầy/cô chỉnh sửa; sách có sẵn vẫn giữ nguyên.') : 'Thầy/cô có thể sửa nội dung trực tiếp, hoặc bấm “Chọn file” để thay bằng file .md mới.';
+      note.classList.remove('hidden');
+    }
+    previewBook();
+  }
+  function closeBookModal() { $('modal-book').classList.add('hidden'); mbEdit = null; }
+  $('btn-add-book').onclick = () => { const s = $('ai-subject').value, g = $('ai-grade').value; openBookModal(null); $('mb-subject').value = s; $('mb-grade').value = g; };
   $('mb-close').onclick = closeBookModal; $('mb-cancel').onclick = closeBookModal;
   $('mb-pick').onclick = () => $('mb-file').click();
   $('mb-file').addEventListener('change', e => {
@@ -636,27 +769,34 @@
   });
   $('mb-text').addEventListener('input', previewBook);
   function previewBook() {
-    const t = $('mb-text').value; mbParsedText = t;
+    const t = $('mb-text').value;
     if (t.trim().length < 20) { $('mb-preview').textContent = 'Chưa có nội dung.'; return; }
     const pb = SGK.parseBook(t);
     $('mb-preview').innerHTML = `Nhận diện được <b class="text-emerald-300">${pb.chapters.length} chương, ${pb.lessons.length} bài</b> • ${t.length.toLocaleString()} ký tự` +
       (pb.fallback ? '<br><span class="text-amber-300">Không thấy mẫu “Bài N” - sẽ tách theo các tiêu đề # (nên đánh số “Bài N” để chọn bài dễ hơn).</span>' : '') +
-      '<div class="mt-2 max-h-28 overflow-y-auto text-slate-400">' + pb.lessons.slice(0, 60).map(l => esc(SGK.lessonLabel(l))).join(' • ') + '</div>';
+      '<div class="mt-2 max-h-28 overflow-y-auto text-slate-400">' + pb.lessons.slice(0, 80).map(l => esc(SGK.lessonLabel(l))).join(' • ') + '</div>';
   }
   $('mb-sample').onclick = () => {
     const sample = `# Tên sách - Lớp ...\n\n## PHẦN 1: Tên phần (không bắt buộc)\n\n### CHƯƠNG I: Tên chương thứ nhất\n- **Bài 1: Tên bài thứ nhất**\n  - Ý kiến thức 1: định nghĩa, công thức, số liệu...\n  - Ý kiến thức 2: ...\n- **Bài 2: Tên bài thứ hai**\n  - Nội dung bài 2...\n\n### CHƯƠNG II: Tên chương thứ hai\n- **Bài 3: Tên bài thứ ba**\n  - Nội dung bài 3...\n`;
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([sample], { type: 'text/markdown' })); a.download = 'mau-cau-truc-sgk.md'; a.click(); URL.revokeObjectURL(a.href);
   };
   $('mb-save').onclick = async () => {
-    const title = $('mb-title').value.trim(), text = $('mb-text').value.trim();
+    const title = $('mb-title').value.trim(), text = $('mb-text').value.trim(), subject = $('mb-subject').value, grade = $('mb-grade').value;
     if (!title) return QM.toast('Nhập tên sách.', 'error');
     if (text.length < 50) return QM.toast('Nội dung quá ngắn.', 'error');
     if (text.length > 800000) return QM.toast('File quá lớn (tối đa ~800.000 ký tự). Hãy tách thành nhiều tài liệu.', 'error');
     try {
-      await db().ref('curriculum').push().set({ subject: $('mb-subject').value, grade: $('mb-grade').value, title, owner: S.user.username, text, createdAt: QM.TS() });
-      QM.toast('Đã thêm tài liệu vào thư viện chung.', 'success'); closeBookModal();
-      $('mb-text').value = ''; $('mb-title').value = ''; $('mb-filename').textContent = '';
-      $('ai-subject').value = $('mb-subject').value; $('ai-grade').value = $('mb-grade').value; refreshBookSelect();
+      if (mbEdit && mbEdit.kind === 'db') {
+        await db().ref('curriculum/' + mbEdit.key).update({ subject, grade, title, text, updatedAt: QM.TS() });
+        QM.toast('Đã cập nhật tài liệu.', 'success');
+      } else {
+        const rec = { subject, grade, title, owner: S.user.username, text, createdAt: QM.TS(), updatedAt: QM.TS() };
+        if (mbEdit && mbEdit.kind === 'static' && mbEdit.replace) rec.replaces = mbEdit.book.id;
+        await db().ref('curriculum').push().set(rec);
+        QM.toast(mbEdit ? 'Đã lưu tài liệu.' : 'Đã thêm tài liệu vào thư viện chung.', 'success');
+        $('ai-subject').value = subject; $('ai-grade').value = grade; refreshBookSelect();
+      }
+      closeBookModal();
     } catch (e) { QM.toast('Không lưu được: ' + QM.fbError(e), 'error'); }
   };
 
@@ -702,6 +842,9 @@
 
   async function openRoom(quiz) {
     if (!quiz.questions || !quiz.questions.length) return QM.toast('Hãy tạo hoặc chọn bộ đề có câu hỏi trước.', 'error');
+    const mcq = quiz.questions.filter(q => !q.type || q.type === 'mcq');
+    if (!mcq.length) return QM.toast('Phòng thi trực tiếp chỉ dùng câu nhiều lựa chọn. Bộ đề này chỉ có câu đúng/sai - hãy dùng tab “Giao bài”.', 'error');
+    if (mcq.length < quiz.questions.length) { QM.toast(`Phòng thi trực tiếp chỉ dùng ${mcq.length} câu nhiều lựa chọn (bỏ ${quiz.questions.length - mcq.length} câu đúng/sai).`, 'info'); quiz = { ...quiz, questions: mcq }; }
     if (S.room) { if (!confirm('Đang có một phòng thi mở. Đóng phòng cũ và mở phòng mới?')) return; await closeRoom(true); }
     try {
       let pin = null;
@@ -998,7 +1141,7 @@
   $('ad-rooms-refresh').onclick = loadRooms;
   $('ad-rooms').addEventListener('click', async e => { const b = e.target.closest('[data-room]'); if (!b) return; if (confirm('Xóa phòng ' + b.dataset.room + '?')) { await db().ref('rooms/' + b.dataset.room).remove(); loadRooms(); } });
 
-  window.QMApp = { S, callGemini, parseJsonLoose, allBooks, getParsed, setView, setQuiz: q => { setQuiz(q); }, setTopic: t => { $('ai-topic').value = t; topicEdited = true; }, isReady: () => !!S.user };
+  window.QMApp = { S, db: () => db(), user: () => S.user, getLibrary: () => libData.slice(), getQuiz: () => S.quiz, callGemini, parseJsonLoose, allBooks, getParsed, setView, setQuiz: q => { setQuiz(q); }, setTopic: t => { $('ai-topic').value = t; topicEdited = true; }, isReady: () => !!S.user };
 
   /* ======================= KHỞI ĐỘNG ======================= */
   (function init() {
