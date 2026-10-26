@@ -311,9 +311,10 @@
   }
 
   /* ======================= SINH ĐỀ BẰNG AI ======================= */
+  const clampInt = (v, lo, hi, def) => { const n = parseInt(v, 10); return isNaN(n) ? def : Math.max(lo, Math.min(hi, n)); };
   function currentParams() {
     return {
-      subject: $('ai-subject').value, grade: $('ai-grade').value, count: (v => isNaN(v) ? 10 : v)(parseInt($('ai-count').value, 10)), countTf: parseInt($('ai-count-tf').value, 10) || 0,
+      subject: $('ai-subject').value, grade: $('ai-grade').value, count: clampInt($('ai-count').value, 0, 60, 10), countTf: clampInt($('ai-count-tf').value, 0, 20, 0),
       diff: $('ai-diff').value, title: $('ai-topic').value.trim(), text: $('scope-text').value.trim(),
       sc: S.scope.result, book: S.scope.book, parsed: S.scope.parsedBook
     };
@@ -464,8 +465,8 @@
   }
   async function genTf(P, hasLessons, allowed) {
     const seen = new Set(); let got = [];
-    for (let attempt = 0; attempt < 3 && got.length < P.countTf; attempt++) {
-      const need = P.countTf - got.length;
+    for (let attempt = 0; attempt < Math.ceil(P.countTf / 6) + 2 && got.length < P.countTf; attempt++) {
+      const need = Math.min(P.countTf - got.length, 6);
       const quotas = hasLessons ? SGK.allocate(P.sc.res.lessons, need) : {};
       const raw = parseJsonLoose(await callGemini(tfPrompt(P, quotas, need, got.map(q => q.question))));
       (Array.isArray(raw) ? raw : (raw.cau || raw.questions || [])).forEach(r => {
@@ -492,8 +493,8 @@
       const allowed = hasLessons ? new Set(P.sc.res.lessons.map(l => l.num)) : null;
       const quotaFull = hasLessons ? SGK.allocate(P.sc.res.lessons, P.count) : {};
       const seen = new Set(); let got = [];
-      for (let attempt = 0; attempt < 3 && got.length < P.count; attempt++) {
-        const need = P.count - got.length;
+      for (let attempt = 0; attempt < Math.ceil(P.count / 15) + 2 && got.length < P.count; attempt++) {
+        const need = Math.min(P.count - got.length, 15);   // mỗi lần gọi AI tối đa 15 câu để không bị cắt cụt
         let quotas = quotaFull;
         if (hasLessons) {
           const have = {}; got.forEach(q => { have[q.lesson] = (have[q.lesson] || 0) + 1; });
